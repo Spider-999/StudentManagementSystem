@@ -9,12 +9,14 @@ namespace StudentManagementSystem.Controllers
     {
         #region Private properties
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         #endregion
 
         #region Contructors
-        public AccountController(UserManager<User> userManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
         #endregion
 
@@ -58,6 +60,33 @@ namespace StudentManagementSystem.Controllers
                 }
             }
             // If the model binding and form submission is not valid, return the view with the model
+            return View(model);
+        }
+        #endregion
+
+        #region Login methods
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var loginAttempt = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+                if (loginAttempt.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Datele sunt incorecte");
+                    return View(model);
+                }
+            }
             return View(model);
         }
         #endregion
