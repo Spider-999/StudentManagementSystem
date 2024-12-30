@@ -11,5 +11,13 @@ namespace StudentManagementSystem.Data
         {
         }
         #endregion
+
+        #region Methods
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+        }
+        #endregion
     }
 }

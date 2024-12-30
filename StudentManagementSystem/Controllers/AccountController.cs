@@ -19,7 +19,7 @@ namespace StudentManagementSystem.Controllers
             _signInManager = signInManager;
         }
         #endregion
-
+       
         #region Register methods
         [HttpGet]
         public IActionResult Register()
@@ -38,13 +38,14 @@ namespace StudentManagementSystem.Controllers
                 {
                     Name = model.Name,
                     Email = model.Email,
-                    UserName = model.Email
+                    UserName = model.Email,
                 };
 
-                // Attempt to create the user in the database
+                // Attempt to create the user in the database and assign the selecte role to the user
                 var registerAttempt = await _userManager.CreateAsync(user, model.Password);
+                var roleAssignAttempt = await _userManager.AddToRoleAsync(user, model.Role);
 
-                if (registerAttempt.Succeeded)
+                if (registerAttempt.Succeeded && roleAssignAttempt.Succeeded)
                 {
                     // Redirect the user to the login page if successful
                     return RedirectToAction("Login", "Account");
@@ -53,6 +54,10 @@ namespace StudentManagementSystem.Controllers
                 {
                     // Otherwise, display the errors to the user
                     foreach (var error in registerAttempt.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    foreach(var error in roleAssignAttempt.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }

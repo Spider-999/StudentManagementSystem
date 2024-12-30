@@ -5,6 +5,7 @@ using StudentManagementSystem.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region Service configuration
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -28,7 +29,9 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDatabaseContext>()
     .AddDefaultTokenProviders();
+#endregion
 
+#region App configuration
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -51,5 +54,24 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+#endregion
+
+// Access the services we configured
+using (var scope = app.Services.CreateScope())
+{
+    // Create user roles
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    string[] roles = { "Admin", "Student", "Professor" };
+
+    // Add user roles to the database
+    foreach(var role in roles)
+    {
+        if(!await roleManager.RoleExistsAsync(role))
+        {
+            // Add role if it doesnt exist yet
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
 
 app.Run();

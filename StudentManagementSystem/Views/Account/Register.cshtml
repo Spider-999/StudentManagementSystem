@@ -35,6 +35,15 @@
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
 
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label">Rol</label>
+                <select asp-for="Role" class="form-control">
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Profesor</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
             <input type="submit" value="Inregistrare" class="btn btn-success w-100 p-2" />
             
             <p class="text-center mt-2">
