@@ -56,6 +56,7 @@ app.MapControllerRoute(
 
 #endregion
 
+#region Seed user roles in the database
 // Access the services we configured
 using (var scope = app.Services.CreateScope())
 {
@@ -73,5 +74,6 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
+#endregion
 
 app.Run();
