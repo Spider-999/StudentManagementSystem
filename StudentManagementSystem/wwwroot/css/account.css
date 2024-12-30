@@ -1,0 +1,23 @@
+﻿.account-container {
+    background-image: url('../images/register-bg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: inherit;
+    min-height: 100vh;
+    min-width:inherit;
+    padding: 30px;
+}
+
+.account-box {
+    background-color: #ffffffef;
+    background-repeat: no-repeat;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 400px;
+    max-height: 650px;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}

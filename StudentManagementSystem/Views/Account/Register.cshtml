@@ -3,6 +3,52 @@
 
 @{
     ViewData["Title"] = "Inregistrare";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
 
-<h1>Inregistrare</h1>
+<div class="account-container">
+    <div class="account-box">
+        <h2 class="text-center mb-4">Inregistrare</h2>
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Nume</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Parola</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label">Confirmarea Parolei</label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <input type="submit" value="Inregistrare" class="btn btn-success w-100 p-2" />
+            
+            <p class="text-center mt-2">
+                <a asp-controller="Account" asp-action="Login" class="text-decoration-none">Login</a>
+            </p>
+            <div class="text-center">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none mt-3">Inapoi</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
