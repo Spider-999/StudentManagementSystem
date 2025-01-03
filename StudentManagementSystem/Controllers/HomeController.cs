@@ -31,6 +31,7 @@ namespace StudentManagementSystem.Controllers
             // Get the first role of the user and redirect them to the appropriate page
             switch (userRole.First())
             {
+                // TODO: Move this to AccountController
                 case "Admin":
                     return RedirectToAction("Index", "Admin");
                 case "Teacher":
