@@ -61,5 +61,23 @@
             set => _afterEndDateUpload = value;
         }
         #endregion
+
+        #region Database relationships
+        // Homeworks are hooked up to different disciplines
+        #region Private properties
+        private Discipline _discipline;
+        private int _disciplineId;
+
+        public Discipline Discipline
+        {
+            get => _discipline;
+            set => _discipline = value;
+        }
+        public int DisciplineId
+        {
+            get => _disciplineId;
+            set => _disciplineId = value;
+        }
+        #endregion
     }
 }
