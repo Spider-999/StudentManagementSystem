@@ -34,7 +34,12 @@ namespace StudentManagementSystem.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+            // Create a separate table for students and professors.
+            // The Student and Professor tables will still have aspnetusers
+            // properties but I didnt want to mix them all together because
+            // the students and professors have different properties.
+            builder.Entity<Student>().ToTable("Students");
+            builder.Entity<Professor>().ToTable("Professors");
         }
         #endregion
     }
