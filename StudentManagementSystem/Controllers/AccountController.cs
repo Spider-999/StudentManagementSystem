@@ -24,7 +24,7 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            return View(new RegisterViewModel());
         }
 
         [HttpPost]
@@ -34,6 +34,13 @@ namespace StudentManagementSystem.Controllers
             if (ModelState.IsValid)
             {
                 // Create a new user with the form data submitted by the user
+                // TODO: Change this to create a Student or Professor object based on the selected role
+                // Also need to add additional properties to the RegisterViewModel to capture the additional data
+                // from the Student or Professor.
+                // I think we should create a separate view model for Student and Professor
+                // and on this Register function we can have just a role selection and then a continue button
+                // which will send the user to the appropriate view to fill in the additional data
+                // and then click on register.
                 User user = new User
                 {
                     Name = model.Name,

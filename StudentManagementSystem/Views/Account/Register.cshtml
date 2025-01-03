@@ -44,6 +44,15 @@
                 <span asp-validation-for="Role" class="text-danger"></span>
             </div>
 
+            @if (Model.Role == "Student")
+            {
+                <p>Hello Student</p>
+            }
+            else
+            {
+            <p>Hello Nothing</p>
+            }
+
             <input type="submit" value="Inregistrare" class="btn btn-success w-100 p-2" />
             
             <p class="text-center mt-2">

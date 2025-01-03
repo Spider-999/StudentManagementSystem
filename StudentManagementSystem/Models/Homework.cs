@@ -67,7 +67,9 @@
         #region Private properties
         private Discipline _discipline;
         private int _disciplineId;
+        #endregion
 
+        #region Getters & Setters
         public Discipline Discipline
         {
             get => _discipline;
@@ -78,6 +80,7 @@
             get => _disciplineId;
             set => _disciplineId = value;
         }
+        #endregion
         #endregion
     }
 }

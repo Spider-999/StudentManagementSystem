@@ -65,9 +65,9 @@ using (var scope = app.Services.CreateScope())
     string[] roles = { "Admin", "Student", "Professor" };
 
     // Add user roles to the database
-    foreach(var role in roles)
+    foreach (var role in roles)
     {
-        if(!await roleManager.RoleExistsAsync(role))
+        if (!await roleManager.RoleExistsAsync(role))
         {
             // Add role if it doesnt exist yet
             await roleManager.CreateAsync(new IdentityRole(role));
