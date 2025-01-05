@@ -5,6 +5,7 @@
         #region Private properties
         private string _yearOfStudy;
         private double _generalGrade;
+       
         #endregion
 
         #region Getters & Setters
@@ -19,6 +20,21 @@
             get => _generalGrade;
             set => _generalGrade = value;
         }
+        #endregion
+
+        #region Database relationships
+        // A student can have many disciplines
+        #region Private properties
+        private ICollection<StudentDiscipline> _studentDisciplines;
+        #endregion
+
+        #region Getters & Setters
+        public ICollection<StudentDiscipline> StudentDisciplines
+        {
+            get => _studentDisciplines;
+            set => _studentDisciplines = value;
+        }
+        #endregion
         #endregion
     }
 }
