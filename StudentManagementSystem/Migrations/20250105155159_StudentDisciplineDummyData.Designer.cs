@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250105102928_OneToManyDisciplineProfessor")]
-    partial class OneToManyDisciplineProfessor
+    [Migration("20250105155159_StudentDisciplineDummyData")]
+    partial class StudentDisciplineDummyData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -160,13 +160,10 @@ namespace StudentManagementSystem.Migrations
 
             modelBuilder.Entity("StudentManagementSystem.Models.Discipline", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("GradeAverage")
+                    b.Property<double?>("GradeAverage")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
@@ -176,15 +173,24 @@ namespace StudentManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Disciplines");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Mathematics"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "Physics"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("AfterEndDateUpload")
                         .HasColumnType("bit");
@@ -196,8 +202,9 @@ namespace StudentManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DisciplineId")
-                        .HasColumnType("int");
+                    b.Property<string>("DisciplineId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -223,6 +230,28 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("Homeworks");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
+                {
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DisciplineId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("StudentId", "DisciplineId");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.ToTable("StudentDisciplines");
+
+                    b.HasData(
+                        new
+                        {
+                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
+                            DisciplineId = "1"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
@@ -304,24 +333,24 @@ namespace StudentManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DisciplineId")
-                        .HasColumnType("int");
+                    b.Property<string>("DisciplineId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasIndex("DisciplineId");
 
-                    b.ToTable("Professors", (string)null);
+                    b.ToTable("Professor", (string)null);
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
                 {
                     b.HasBaseType("StudentManagementSystem.Models.User");
 
-                    b.Property<double>("GeneralGrade")
+                    b.Property<double?>("GeneralGrade")
                         .HasColumnType("float");
 
-                    b.Property<string>("YearOfStudy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("YearOfStudy")
+                        .HasColumnType("int");
 
                     b.ToTable("Students", (string)null);
                 });
@@ -388,6 +417,25 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Discipline");
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
+                        .WithMany("StudentDisciplines")
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentManagementSystem.Models.Student", "Student")
+                        .WithMany("StudentDisciplines")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discipline");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
                 {
                     b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
@@ -419,6 +467,13 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Homeworks");
 
                     b.Navigation("Professors");
+
+                    b.Navigation("StudentDisciplines");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
+                {
+                    b.Navigation("StudentDisciplines");
                 });
 #pragma warning restore 612, 618
         }

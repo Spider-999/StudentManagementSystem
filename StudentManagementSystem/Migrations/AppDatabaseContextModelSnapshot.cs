@@ -160,7 +160,7 @@ namespace StudentManagementSystem.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("GradeAverage")
+                    b.Property<double?>("GradeAverage")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
@@ -175,13 +175,11 @@ namespace StudentManagementSystem.Migrations
                         new
                         {
                             Id = "1",
-                            GradeAverage = 8.5,
-                            Name = "Math"
+                            Name = "Mathematics"
                         },
                         new
                         {
                             Id = "2",
-                            GradeAverage = 9.5,
                             Name = "Physics"
                         });
                 });
@@ -244,6 +242,18 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("StudentDisciplines");
+
+                    b.HasData(
+                        new
+                        {
+                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
+                            DisciplineId = "1"
+                        },
+                        new
+                        {
+                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
+                            DisciplineId = "2"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
@@ -331,19 +341,18 @@ namespace StudentManagementSystem.Migrations
 
                     b.HasIndex("DisciplineId");
 
-                    b.ToTable("Professors", (string)null);
+                    b.ToTable("Professor", (string)null);
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
                 {
                     b.HasBaseType("StudentManagementSystem.Models.User");
 
-                    b.Property<double>("GeneralGrade")
+                    b.Property<double?>("GeneralGrade")
                         .HasColumnType("float");
 
-                    b.Property<string>("YearOfStudy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("YearOfStudy")
+                        .HasColumnType("int");
 
                     b.ToTable("Students", (string)null);
                 });

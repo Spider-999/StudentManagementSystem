@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250103145055_StudentsProfessorsTables")]
-    partial class StudentsProfessorsTables
+    [Migration("20250105154943_StudentDisciplineManyToMany")]
+    partial class StudentDisciplineManyToMany
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,90 @@ namespace StudentManagementSystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.Discipline", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double?>("GradeAverage")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Disciplines");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Mathematics"
+                        });
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("AfterEndDateUpload")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisciplineId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Grade")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("Mandatory")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Penalty")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.ToTable("Homeworks");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
+                {
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DisciplineId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("StudentId", "DisciplineId");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.ToTable("StudentDisciplines");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -237,19 +321,24 @@ namespace StudentManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Professors", (string)null);
+                    b.Property<string>("DisciplineId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.ToTable("Professor", (string)null);
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
                 {
                     b.HasBaseType("StudentManagementSystem.Models.User");
 
-                    b.Property<double>("GeneralGrade")
+                    b.Property<double?>("GeneralGrade")
                         .HasColumnType("float");
 
-                    b.Property<string>("YearOfStudy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("YearOfStudy")
+                        .HasColumnType("int");
 
                     b.ToTable("Students", (string)null);
                 });
@@ -305,13 +394,51 @@ namespace StudentManagementSystem.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
+                        .WithMany("Homeworks")
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discipline");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
+                        .WithMany("StudentDisciplines")
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentManagementSystem.Models.Student", "Student")
+                        .WithMany("StudentDisciplines")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discipline");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
                 {
+                    b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
+                        .WithMany("Professors")
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StudentManagementSystem.Models.User", null)
                         .WithOne()
                         .HasForeignKey("StudentManagementSystem.Models.Professor", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Discipline");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
@@ -321,6 +448,20 @@ namespace StudentManagementSystem.Migrations
                         .HasForeignKey("StudentManagementSystem.Models.Student", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Discipline", b =>
+                {
+                    b.Navigation("Homeworks");
+
+                    b.Navigation("Professors");
+
+                    b.Navigation("StudentDisciplines");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
+                {
+                    b.Navigation("StudentDisciplines");
                 });
 #pragma warning restore 612, 618
         }

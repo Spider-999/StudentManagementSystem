@@ -41,7 +41,7 @@ namespace StudentManagementSystem.Controllers
                 // and on this Register function we can have just a role selection and then a continue button
                 // which will send the user to the appropriate view to fill in the additional data
                 // and then click on register.
-                User user = new User
+                User user = new Student
                 {
                     Name = model.Name,
                     Email = model.Email,

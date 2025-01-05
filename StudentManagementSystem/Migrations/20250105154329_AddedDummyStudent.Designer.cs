@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250105115345_ManyToManyStudentDisciplines")]
-    partial class ManyToManyStudentDisciplines
+    [Migration("20250105154329_AddedDummyStudent")]
+    partial class AddedDummyStudent
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,7 +163,7 @@ namespace StudentManagementSystem.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("GradeAverage")
+                    b.Property<double?>("GradeAverage")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
@@ -173,6 +173,13 @@ namespace StudentManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Disciplines");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Mathematics"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
@@ -218,21 +225,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("Homeworks");
-                });
-
-            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
-                {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DisciplineId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("StudentId", "DisciplineId");
-
-                    b.HasIndex("DisciplineId");
-
-                    b.ToTable("StudentDisciplines");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
@@ -320,21 +312,37 @@ namespace StudentManagementSystem.Migrations
 
                     b.HasIndex("DisciplineId");
 
-                    b.ToTable("Professors", (string)null);
+                    b.ToTable("Professor", (string)null);
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
                 {
                     b.HasBaseType("StudentManagementSystem.Models.User");
 
-                    b.Property<double>("GeneralGrade")
+                    b.Property<double?>("GeneralGrade")
                         .HasColumnType("float");
 
-                    b.Property<string>("YearOfStudy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("YearOfStudy")
+                        .HasColumnType("int");
 
                     b.ToTable("Students", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "2d266f17-ffe3-4aab-b7a7-ba275a2cc112",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "14a887a2-81b1-42ae-8152-d9381d231604",
+                            Email = "harry@st.com",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            Name = "Harry",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "cf051c69-e7ad-4f66-96dd-b3ac3efecdfa",
+                            TwoFactorEnabled = false,
+                            GeneralGrade = 30.0,
+                            YearOfStudy = 2
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -399,25 +407,6 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Discipline");
                 });
 
-            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
-                {
-                    b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
-                        .WithMany("StudentDisciplines")
-                        .HasForeignKey("DisciplineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentManagementSystem.Models.Student", "Student")
-                        .WithMany("StudentDisciplines")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Discipline");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
                 {
                     b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
@@ -449,13 +438,6 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Homeworks");
 
                     b.Navigation("Professors");
-
-                    b.Navigation("StudentDisciplines");
-                });
-
-            modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
-                {
-                    b.Navigation("StudentDisciplines");
                 });
 #pragma warning restore 612, 618
         }
