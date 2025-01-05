@@ -9,6 +9,7 @@ namespace StudentManagementSystem.Models
         #endregion
 
         #region Setters & Getters
+        
         public string Name
         {
             get { return _Name; }

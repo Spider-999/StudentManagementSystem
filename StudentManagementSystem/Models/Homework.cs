@@ -1,8 +1,11 @@
-﻿namespace StudentManagementSystem.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace StudentManagementSystem.Models
 {
     public class Homework
     {
         #region Private properties
+        private string _id;
         private string _title;
         private string _description;
         private DateTime _creationDate;
@@ -15,6 +18,11 @@
         #endregion
 
         #region Getters & Setters
+        public string Id
+        {
+            get => _id;
+            set => _id = value;
+        }
         public string Title
         {
             get => _title;
@@ -66,19 +74,20 @@
         // Homeworks are hooked up to different disciplines
         #region Private properties
         private Discipline _discipline;
-        private int _disciplineId;
+        private string _disciplineId;
         #endregion
 
         #region Getters & Setters
+        public string DisciplineId
+        {
+            get => _disciplineId;
+            set => _disciplineId = value;
+        }
+        [ForeignKey("DisciplineId")]
         public Discipline Discipline
         {
             get => _discipline;
             set => _discipline = value;
-        }
-        public int DisciplineId
-        {
-            get => _disciplineId;
-            set => _disciplineId = value;
         }
         #endregion
         #endregion

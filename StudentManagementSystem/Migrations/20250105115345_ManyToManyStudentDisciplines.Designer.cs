@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagementSystem.Data;
 
@@ -11,9 +12,11 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250105115345_ManyToManyStudentDisciplines")]
+    partial class ManyToManyStudentDisciplines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,20 +173,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Disciplines");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            GradeAverage = 8.5,
-                            Name = "Math"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            GradeAverage = 9.5,
-                            Name = "Physics"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>

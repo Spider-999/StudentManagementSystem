@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagementSystem.Data;
 
@@ -11,9 +12,11 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250105102928_OneToManyDisciplineProfessor")]
+    partial class OneToManyDisciplineProfessor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,8 +160,11 @@ namespace StudentManagementSystem.Migrations
 
             modelBuilder.Entity("StudentManagementSystem.Models.Discipline", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<double>("GradeAverage")
                         .HasColumnType("float");
@@ -170,26 +176,15 @@ namespace StudentManagementSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Disciplines");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            GradeAverage = 8.5,
-                            Name = "Math"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            GradeAverage = 9.5,
-                            Name = "Physics"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("AfterEndDateUpload")
                         .HasColumnType("bit");
@@ -201,9 +196,8 @@ namespace StudentManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DisciplineId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("DisciplineId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -229,21 +223,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("Homeworks");
-                });
-
-            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
-                {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("DisciplineId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("StudentId", "DisciplineId");
-
-                    b.HasIndex("DisciplineId");
-
-                    b.ToTable("StudentDisciplines");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
@@ -325,9 +304,8 @@ namespace StudentManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DisciplineId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("DisciplineId")
+                        .HasColumnType("int");
 
                     b.HasIndex("DisciplineId");
 
@@ -410,25 +388,6 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Discipline");
                 });
 
-            modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
-                {
-                    b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
-                        .WithMany("StudentDisciplines")
-                        .HasForeignKey("DisciplineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StudentManagementSystem.Models.Student", "Student")
-                        .WithMany("StudentDisciplines")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Discipline");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
                 {
                     b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
@@ -460,13 +419,6 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Homeworks");
 
                     b.Navigation("Professors");
-
-                    b.Navigation("StudentDisciplines");
-                });
-
-            modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
-                {
-                    b.Navigation("StudentDisciplines");
                 });
 #pragma warning restore 612, 618
         }
