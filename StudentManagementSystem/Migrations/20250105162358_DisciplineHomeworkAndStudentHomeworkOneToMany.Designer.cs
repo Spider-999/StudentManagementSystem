@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagementSystem.Data;
 
@@ -11,9 +12,11 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250105162358_DisciplineHomeworkAndStudentHomeworkOneToMany")]
+    partial class DisciplineHomeworkAndStudentHomeworkOneToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,10 +242,10 @@ namespace StudentManagementSystem.Migrations
                         {
                             Id = "1",
                             AfterEndDateUpload = false,
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreationDate = new DateTime(2025, 1, 5, 18, 23, 57, 557, DateTimeKind.Local).AddTicks(8385),
                             Description = "Add 2+2",
                             DisciplineId = "1",
-                            EndDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 1, 6, 18, 23, 57, 559, DateTimeKind.Local).AddTicks(4563),
                             Grade = 0.0,
                             Mandatory = true,
                             Penalty = 1.0,
@@ -254,10 +257,10 @@ namespace StudentManagementSystem.Migrations
                         {
                             Id = "2",
                             AfterEndDateUpload = false,
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreationDate = new DateTime(2025, 1, 5, 18, 23, 57, 559, DateTimeKind.Local).AddTicks(5746),
                             Description = "F=m x _?",
                             DisciplineId = "2",
-                            EndDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 1, 6, 18, 23, 57, 559, DateTimeKind.Local).AddTicks(5752),
                             Grade = 0.0,
                             Mandatory = true,
                             Penalty = 1.0,

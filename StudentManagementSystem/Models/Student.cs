@@ -26,6 +26,7 @@
         // A student can have many disciplines
         #region Private properties
         private ICollection<StudentDiscipline> _studentDisciplines;
+        private ICollection<Homework> _homeworks;
         #endregion
 
         #region Getters & Setters
@@ -33,6 +34,12 @@
         {
             get => _studentDisciplines;
             set => _studentDisciplines = value;
+        }
+
+        public ICollection<Homework> Homeworks
+        {
+            get => _homeworks;
+            set => _homeworks = value;
         }
         #endregion
         #endregion

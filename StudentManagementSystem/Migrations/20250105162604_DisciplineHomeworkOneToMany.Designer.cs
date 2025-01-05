@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagementSystem.Data;
 
@@ -11,9 +12,11 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250105162604_DisciplineHomeworkOneToMany")]
+    partial class DisciplineHomeworkOneToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,38 +236,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Homeworks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AfterEndDateUpload = false,
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Add 2+2",
-                            DisciplineId = "1",
-                            EndDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            Title = "Math1"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            AfterEndDateUpload = false,
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "F=m x _?",
-                            DisciplineId = "2",
-                            EndDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            Title = "Physics"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>

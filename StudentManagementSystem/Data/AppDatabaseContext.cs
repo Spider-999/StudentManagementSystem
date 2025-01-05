@@ -65,6 +65,18 @@ namespace StudentManagementSystem.Data
             builder.Entity<StudentDiscipline>().HasOne(sd => sd.Student).WithMany(s => s.StudentDisciplines).HasForeignKey(sd => sd.StudentId);
             builder.Entity<StudentDiscipline>().HasOne(sd => sd.Discipline).WithMany(d => d.StudentDisciplines).HasForeignKey(sd => sd.DisciplineId);
 
+            // One to many relationship between discipline and homeworks
+            builder.Entity<Discipline>().
+                HasMany(h => h.Homeworks).
+                WithOne(d => d.Discipline).
+                HasForeignKey(f => f.DisciplineId);
+
+            // One to many relationship between student and homeworks
+            builder.Entity<Student>().
+                HasMany(h => h.Homeworks).
+                WithOne(s => s.Student).
+                HasForeignKey(f => f.StudentId);
+
             // Dummy data
             builder.Entity<Discipline>().HasData(
                 new Discipline { Id = "1", Name = "Mathematics" },
@@ -73,7 +85,38 @@ namespace StudentManagementSystem.Data
 
             builder.Entity<StudentDiscipline>().HasData(
                 new StudentDiscipline { DisciplineId="1", StudentId= "df114734-138a-438a-9e96-12d02427a538" },
-                new StudentDiscipline { DisciplineId = "2", StudentId = "df114734-138a-438a-9e96-12d02427a538" }
+                new StudentDiscipline { DisciplineId = "2", StudentId = "df114734-138a-438a-9e96-12d02427a538" },
+                new StudentDiscipline { DisciplineId = "1", StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6" },
+                new StudentDiscipline { DisciplineId = "2", StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6" }
+                );
+
+            builder.Entity<Homework>().HasData(
+                new Homework
+                {
+                    Id = "1",
+                    Title = "Math1",
+                    Description = "Add 2+2",
+                    Grade = 0,
+                    Status = false,
+                    Mandatory = true,
+                    Penalty = 1,
+                    AfterEndDateUpload = false,
+                    DisciplineId = "1",
+                    StudentId = "df114734-138a-438a-9e96-12d02427a538"
+                },
+                new Homework
+                {
+                    Id = "2",
+                    Title = "Physics",
+                    Description = "F=m x _?",
+                    Grade = 0,
+                    Status = false,
+                    Mandatory = true,
+                    Penalty = 1,
+                    AfterEndDateUpload = false,
+                    DisciplineId = "2",
+                    StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6"
+                }
                 );
         }
         #endregion

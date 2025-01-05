@@ -6,6 +6,8 @@ namespace StudentManagementSystem.Models
     {
         #region Private properties
         private string _id;
+        private string _studentId;
+        private Student _student;
         private string _title;
         private string _description;
         private DateTime _creationDate;
@@ -88,6 +90,16 @@ namespace StudentManagementSystem.Models
         {
             get => _discipline;
             set => _discipline = value;
+        }
+        public string StudentId
+        {
+            get => _studentId;
+            set => _studentId = value;
+        }
+        [ForeignKey("StudentId")]
+        public Student Student
+        {
+            get => _student;
         }
         #endregion
         #endregion
