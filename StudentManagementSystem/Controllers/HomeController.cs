@@ -37,7 +37,7 @@ namespace StudentManagementSystem.Controllers
                 case "Teacher":
                     return RedirectToAction("Index", "Teacher");
                 case "Student":
-                    return RedirectToAction("Dashboard", "Student");
+                    return RedirectToAction("Index", "Student");
                 default:
                     return View();
             }
