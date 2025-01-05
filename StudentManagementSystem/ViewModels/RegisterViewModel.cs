@@ -7,6 +7,7 @@ namespace StudentManagementSystem.ViewModels
     /// </summary>
     public class RegisterViewModel
     {
+        #region User properties
         #region Private properties
         private string _name;
         private string _email;
@@ -56,6 +57,35 @@ namespace StudentManagementSystem.ViewModels
             set { _role = value; }
 
         }
+        #endregion
+        #endregion
+
+        #region Student specific properties
+        private int _yearOfStudy;
+
+        #region Getters & Setters
+        [Required(ErrorMessage ="Anul de studiu trebuie sa fie selectat")]
+        [Display(Name="Anul de studiu")]
+        public int YearOfStudy
+        {
+            get => _yearOfStudy;
+            set => _yearOfStudy = value;
+        }
+        #endregion
+        #endregion
+
+        #region Professor specific properties
+        private string _department;
+
+        #region Getters & Setters
+        [Required(ErrorMessage = "Departamentul trebuie sa fie selectat")]
+        [Display(Name="Departament")]
+        public string Department
+        {
+            get => _department;
+            set => _department = value;
+        }
+        #endregion
         #endregion
     }
 }

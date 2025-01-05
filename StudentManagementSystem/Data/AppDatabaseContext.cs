@@ -80,7 +80,8 @@ namespace StudentManagementSystem.Data
             // Dummy data
             builder.Entity<Discipline>().HasData(
                 new Discipline { Id = "1", Name = "Mathematics" },
-                new Discipline { Id = "2", Name = "Physics"}
+                new Discipline { Id = "2", Name = "Physics"},
+                new Discipline { Id = "3", Name = "ComputerScience"}
                 );
 
             builder.Entity<StudentDiscipline>().HasData(

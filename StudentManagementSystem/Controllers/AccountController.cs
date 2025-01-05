@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.ViewModels;
 
@@ -10,13 +12,15 @@ namespace StudentManagementSystem.Controllers
         #region Private properties
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly AppDatabaseContext _context;
         #endregion
 
         #region Contructors
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, AppDatabaseContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
         #endregion
        
@@ -33,20 +37,48 @@ namespace StudentManagementSystem.Controllers
             // Check if the model binding and form submission is valid
             if (ModelState.IsValid)
             {
-                // Create a new user with the form data submitted by the user
-                // TODO: Change this to create a Student or Professor object based on the selected role
-                // Also need to add additional properties to the RegisterViewModel to capture the additional data
-                // from the Student or Professor.
-                // I think we should create a separate view model for Student and Professor
-                // and on this Register function we can have just a role selection and then a continue button
-                // which will send the user to the appropriate view to fill in the additional data
-                // and then click on register.
-                User user = new Student
+                User user;
+                // TODO: Move this logic elsewhere, maybe make a 
+                // static UserAccountCreation class with methods for 
+                // both Student and Professor.
+                switch (model.Role)
                 {
-                    Name = model.Name,
-                    Email = model.Email,
-                    UserName = model.Email,
-                };
+                    case "Student":
+                        user = new Student
+                        {
+                            Name = model.Name,
+                            Email = model.Email,
+                            UserName = model.Email,
+                            YearOfStudy = model.YearOfStudy
+                        };
+                        break;
+                    case "Professor":
+                        // Get all of the disciplines in the database
+                        var disciplines = await _context.Disciplines.ToListAsync();
+                        string id = string.Empty;
+                        // Search for the selected department of the user(discipline)
+                        // and get the id of that discipline.
+                        foreach(Discipline disc in disciplines)
+                        {
+                            if (disc.Name == model.Department)
+                            {
+                                id = disc.Id;
+                                break;
+                            }
+                        }
+                        user = new Professor
+                        {
+                            Name = model.Name,
+                            Email = model.Email,
+                            UserName = model.Email,
+                            Department = model.Department,
+                            DisciplineId = id
+                        };
+                        break;
+                    default:
+                        throw new Exception("Registration went wrong!");
+                        break;
+                }
 
                 // Attempt to create the user in the database and assign the selecte role to the user
                 var registerAttempt = await _userManager.CreateAsync(user, model.Password);
@@ -60,10 +92,6 @@ namespace StudentManagementSystem.Controllers
                 else
                 {
                     // Otherwise, display the errors to the user
-                    foreach (var error in registerAttempt.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
                     foreach(var error in roleAssignAttempt.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
@@ -91,6 +119,7 @@ namespace StudentManagementSystem.Controllers
                 var loginAttempt = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
                 if (loginAttempt.Succeeded)
                 {
+                    // TODO: Redirect user to their specific view: StudentView, ProfessorView or AdminView
                     return RedirectToAction("Index", "Home");
                 }
                 else

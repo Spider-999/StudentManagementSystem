@@ -37,21 +37,33 @@
 
             <div class="mb-3">
                 <label asp-for="Role" class="form-label">Rol</label>
-                <select asp-for="Role" class="form-control">
+                <select asp-for="Role" class="form-control" id="roleSelector">
                     <option value="Student">Student</option>
-                    <option value="Teacher">Profesor</option>
+                    <option value="Professor">Profesor</option>
                 </select>
                 <span asp-validation-for="Role" class="text-danger"></span>
             </div>
 
-            @if (Model.Role == "Student")
-            {
-                <p>Hello Student</p>
-            }
-            else
-            {
-            <p>Hello Nothing</p>
-            }
+            <div class="form-group mb-4" id="studentFields" style="display:block;">
+                <label asp-for="YearOfStudy"></label>
+                <select asp-for="YearOfStudy" class="form-control">
+                    <option value=1>Anul 1</option>
+                    <option value=2>Anul 2</option>
+                    <option value=3>Anul 3</option>
+                    <option value=4>Anul 4</option>
+                </select>
+                <span asp-validation-for="YearOfStudy" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4" id="professorFields" style="display:none;">
+                <label asp-for="Department"></label>
+                <select asp-for="Department" class="form-control">
+                    <option value="Mathematics">Matematica</option>
+                    <option value="Physics">Fizica</option>
+                    <option value="ComputerScience">Informatica</option>
+                </select>
+                <span asp-validation-for="Department" class="text-danger"></span>
+            </div>
 
             <input type="submit" value="Inregistrare" class="btn btn-success w-100 p-2" />
             
@@ -69,4 +81,23 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <!-- This function changes the form dynamically when the user selects his role -->
+    <script>
+        document.
+        getElementById("roleSelector").
+        addEventListener("change", function()
+        {
+            var role = this.value;
+            document.getElementById("studentFields").style.display = "none";
+            document.getElementById("professorFields").style.display = "none";
+            if(role === "Student")
+            {
+                document.getElementById("studentFields").style.display = "block";
+            }
+            else if(role === "Professor")
+            {
+                document.getElementById("professorFields").style.display = "block";
+            }
+        });
+    </script>
 }
