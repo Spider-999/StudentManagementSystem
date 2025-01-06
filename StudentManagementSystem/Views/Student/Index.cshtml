@@ -1,17 +1,7 @@
-﻿@model List<StudentManagementSystem.Models.Homework>
-
-<h2>My Homeworks</h2>
-
-@if (!Model.Any())
-{
-    <p>No homeworks found.</p>
+﻿@model StudentManagementSystem.Models.Student
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Acasa";
 }
-else
-{
-    <ul>
-        @foreach (var homework in Model)
-        {
-            <li>@homework.Title - @homework.Description</li>
-        }
-    </ul>
-}
+
+<h5>Bine ai venit, @Model.Name!</h5>

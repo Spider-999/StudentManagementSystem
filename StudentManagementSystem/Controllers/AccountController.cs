@@ -82,8 +82,7 @@ namespace StudentManagementSystem.Controllers
                 if (loginAttempt.Succeeded)
                 {
                     // See in the helper methods region
-                    await RedirectBasedOnRoleAsync(model);
-                    return RedirectToAction("Index", "Home");
+                    return await RedirectBasedOnRoleAsync(model);
                 }
                 else
                 {
@@ -158,7 +157,7 @@ namespace StudentManagementSystem.Controllers
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid login!");
-                return View(model);
+                return View("Login", model);
             }
 
             // Find which role the user belongs to and redirect them

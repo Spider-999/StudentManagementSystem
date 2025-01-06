@@ -26,16 +26,27 @@ namespace StudentManagementSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            if(user == null)
+            // Return 404 not found if the user wasnt found
+            if (user == null)
+                return NotFound();
+
+            return View(user);
+        }
+        
+        public async Task<IActionResult> Homework()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
                 return Unauthorized();
             }
 
+            // Get all of the homeworks of this specific user
             var homeworks = await _context.Homeworks.
                 Where(s => s.StudentId == user.Id).
                 ToListAsync();
 
             return View(homeworks);
-        }   
+        }
     }
 }

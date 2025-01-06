@@ -1,0 +1,25 @@
+﻿@model List<StudentManagementSystem.Models.Homework>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Teme";
+}
+
+
+<h2>Teme</h2>
+
+@if (!Model.Any())
+{
+    <p>Nu ai nicio tema =^)</p>
+}
+else
+{
+    <th>
+        <ul>
+            @foreach (var homework in Model)
+            {
+                <li>@homework.Title - @homework.Description</li>
+            }
+        </ul>
+    </th>
+}
