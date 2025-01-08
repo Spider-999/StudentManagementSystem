@@ -18,7 +18,7 @@ else
         <ul>
             @foreach (var homework in Model)
             {
-                <li>@homework.Title - @homework.Description</li>
+                <li><a asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">@homework.Title</a> - @homework.Description</li>
             }
         </ul>
     </th>

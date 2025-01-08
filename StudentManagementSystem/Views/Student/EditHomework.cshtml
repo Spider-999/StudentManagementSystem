@@ -1,0 +1,25 @@
+﻿@model StudentManagementSystem.Models.Homework
+
+@{
+    ViewData["Title"] = "Edit Homework";
+}
+
+<h2>Edit Homework</h2>
+
+<form asp-action="EditHomework" method="post">
+
+    <div class="form-group">
+        <label asp-for="Content"></label>
+        <textarea asp-for="Content">@Model.Content</textarea>
+    </div>
+
+    <label asp-for="EndDate"></label>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="StudentId" />
+    <input type="hidden" asp-for="DisciplineId" />
+    <button type="submit" class="btn btn-primary">Salveaza</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

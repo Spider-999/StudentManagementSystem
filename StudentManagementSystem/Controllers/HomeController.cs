@@ -21,6 +21,7 @@ namespace StudentManagementSystem.Controllers
         {
             // This logic is for when the user closes the site
             // and opens it again to redirect them to their specific role pages
+            // instead of seeing the Home controllers basic index page.
             if(User.Identity.IsAuthenticated)
             {
                 var user = await _userManager.GetUserAsync(User);
