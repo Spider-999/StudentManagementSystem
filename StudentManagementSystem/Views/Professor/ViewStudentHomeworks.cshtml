@@ -1,0 +1,38 @@
+﻿@model List<StudentManagementSystem.Models.Homework>
+
+@{
+    ViewData["Title"] = $"Tema Studentului {@ViewBag.StudentName}";
+}
+
+<h2>Temele pentru @ViewBag.StudentName</h2>
+
+@if (!Model.Any())
+{
+    <p>Nu au fost gasite teme pentru acest student.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titlu</th>
+                <th>Descriere</th>
+                <th>Termen limita</th>
+                <th>Nota</th>
+                <th>Stare</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var homework in Model)
+            {
+                <tr>
+                    <td>@homework.Title</td>
+                    <td>@homework.Description</td>
+                    <td>@homework.EndDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@homework.Grade</td>
+                    <td>@homework.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
