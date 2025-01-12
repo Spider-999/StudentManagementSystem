@@ -62,5 +62,37 @@ namespace StudentManagementSystem.Controllers
             ViewBag.StudentName = student.Name;
             return View(homeworks);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Homeworks()
+        {
+            // TODO: Add some custom exceptions for when a user is not found
+            // a professor is not found and homeworks are not found.
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return NotFound();
+
+
+            // Try to find the professor
+            var professor = await _context.Professors
+                                  .Include(p => p.Discipline)
+                                  .FirstOrDefaultAsync(p => p.Id == user.Id);
+            if (professor == null)
+                return NotFound();
+
+            // Try to find all of the homeworks for the professors disciplines
+            var homeworks = await _context.Homeworks
+                                  .Where(h => h.DisciplineId == professor.DisciplineId)
+                                  .ToListAsync();
+
+            ViewBag.DisciplineName = professor.Discipline.Name;
+            return View(homeworks);
+        }
+
+        [HttpGet]
+        public IActionResult CreateHomework()
+        {
+            return View();
+        }
     }
 }
