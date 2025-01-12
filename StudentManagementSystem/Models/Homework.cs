@@ -19,6 +19,7 @@ namespace StudentManagementSystem.Models
         private bool? _mandatory;
         private double? _penalty;
         private bool? _afterEndDateUpload;
+        private bool? _isTemplate;
         #endregion
 
         #region Getters & Setters
@@ -79,6 +80,12 @@ namespace StudentManagementSystem.Models
         {
             get => _content;
             set => _content = value;
+        }
+
+        public bool? IsTemplate
+        {
+            get => _isTemplate;
+            set => _isTemplate = value;
         }
         #endregion
 

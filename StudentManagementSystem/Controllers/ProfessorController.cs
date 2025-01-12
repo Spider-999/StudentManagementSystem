@@ -85,9 +85,12 @@ namespace StudentManagementSystem.Controllers
             if (professor == null)
                 return NotFound();
 
-            // Try to find all of the homeworks for the professors disciplines
+            // Try to find all of the homeworks for the professors disciplines.
+            // Check if the homework is a template, I dont want to show the same 
+            // copy of a homework because there might be hundreds of the same
+            // homeworks for students.
             var homeworks = await _context.Homeworks
-                                  .Where(h => h.DisciplineId == professor.DisciplineId)
+                                  .Where(h => h.DisciplineId == professor.DisciplineId && h.IsTemplate == true)
                                   .ToListAsync();
 
             ViewBag.DisciplineName = professor.Discipline.Name;
@@ -121,7 +124,35 @@ namespace StudentManagementSystem.Controllers
                 if (students == null)
                     return NotFound();
 
-                // Add the homework for every student
+
+                try
+                {
+                    // Add a homework template so I dont show the same copies of the
+                    // homework on the homeworks page of the professor.
+                    Homework homeworkTemplate = new Homework
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        Content = string.Empty,
+                        Grade = 0.00,
+                        Status = false,
+                        Mandatory = model.Mandatory,
+                        Penalty = model.Penalty,
+                        AfterEndDateUpload = model.AfterEndUploadDate,
+                        DisciplineId = professor.DisciplineId,
+                        IsTemplate = true
+                    };
+                    _context.Homeworks.Add(homeworkTemplate);
+                    await _context.SaveChangesAsync();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    ModelState.AddModelError(string.Empty, "Nu a putut fi adaugat templateul pentru tema");
+                    return View(model);
+                }
+
+                // Add the homework for every student in the corresponding discipline
                 List<Homework> homeworks = new List<Homework>();
                 foreach (var student in students)
                 {
@@ -136,7 +167,8 @@ namespace StudentManagementSystem.Controllers
                         Penalty = model.Penalty,
                         AfterEndDateUpload = model.AfterEndUploadDate,
                         DisciplineId = professor.DisciplineId,
-                        StudentId = student.Id
+                        StudentId = student.Id,
+                        IsTemplate = false
                     };
                     homeworks.Add(homework);
                 }

@@ -9,6 +9,9 @@
 @if (!Model.Any())
 {
     <p>Nu exista teme pentru aceasta disciplina.</p>
+    <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateHomework">
+        Creeaza o tema
+    </a>
 }
 else
 {
