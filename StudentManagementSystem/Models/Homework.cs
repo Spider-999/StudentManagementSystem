@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentManagementSystem.Models
 {
@@ -21,6 +22,8 @@ namespace StudentManagementSystem.Models
         #endregion
 
         #region Getters & Setters
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id
         {
             get => _id;

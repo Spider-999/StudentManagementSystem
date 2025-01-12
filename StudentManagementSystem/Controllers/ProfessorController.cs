@@ -4,22 +4,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.ViewModels;
 
 namespace StudentManagementSystem.Controllers
 {
-    [Authorize(Roles ="Professor,Admin")]
+    [Authorize(Roles = "Professor,Admin")]
     public class ProfessorController : Controller
     {
         #region Private properties
         private UserManager<User> _userManager;
         private AppDatabaseContext _context;
+        private readonly ILogger<ProfessorController> _logger;
         #endregion
 
         #region Constructor
-        public ProfessorController(UserManager<User> userManager, AppDatabaseContext context)
+        public ProfessorController(UserManager<User> userManager, 
+                                   AppDatabaseContext context, 
+                                   ILogger<ProfessorController> logger)
         {
             _userManager = userManager;
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -39,7 +44,7 @@ namespace StudentManagementSystem.Controllers
             // Get all of the students from the database and put them in a list
             var students = await _context.Students.ToListAsync();
 
-            if(students == null)
+            if (students == null)
                 return NotFound();
 
             // Pass the student list to the view
@@ -93,6 +98,65 @@ namespace StudentManagementSystem.Controllers
         public IActionResult CreateHomework()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateHomework(HomeworkViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                    return NotFound();
+
+                var professor = await _context.Professors
+                                      .Include(p => p.Discipline)
+                                      .FirstOrDefaultAsync(p => p.Id == user.Id);
+                if (professor == null)
+                    return NotFound();
+
+                var students = await _context.Students
+                                      .Where(s => s.StudentDisciplines.Any(sd => sd.DisciplineId == professor.DisciplineId))
+                                      .ToListAsync();
+                if (students == null)
+                    return NotFound();
+
+                // Add the homework for every student
+                List<Homework> homeworks = new List<Homework>();
+                foreach (var student in students)
+                {
+                    Homework homework = new Homework
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        Content = string.Empty,
+                        Grade = 0.00,
+                        Status = false,
+                        Mandatory = model.Mandatory,
+                        Penalty = model.Penalty,
+                        AfterEndDateUpload = model.AfterEndUploadDate,
+                        DisciplineId = professor.DisciplineId,
+                        StudentId = student.Id
+                    };
+                    homeworks.Add(homework);
+                }
+
+                try
+                {
+                    _context.Homeworks.AddRange(homeworks);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    ModelState.AddModelError("", "A aparut o eroare, nu am putut creea tema.");
+                    return View(model);
+                }
+                
+                return RedirectToAction(nameof(Homeworks));
+            }
+
+            return View(model);
         }
     }
 }
