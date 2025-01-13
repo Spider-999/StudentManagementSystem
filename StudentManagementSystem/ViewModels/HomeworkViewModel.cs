@@ -45,6 +45,7 @@ namespace StudentManagementSystem.ViewModels
             set => _content = value;
         }
 
+        [Display(Name = "Data creeari")]
         public DateTime? CreationDate
         {
             get => _creationDate;
@@ -58,12 +59,14 @@ namespace StudentManagementSystem.ViewModels
             set => _endDate = value;
         }
 
+        [Display(Name = "Nota")]
         public double? Grade
         {
             get => _grade;
             set => _grade = value;
         }
 
+        [Display(Name = "Stare")]
         public bool? Status
         {
             get => _status;

@@ -262,5 +262,39 @@ namespace StudentManagementSystem.Controllers
 
             return View(model);
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteHomework(string homeworkId)
+        {
+            // Find the homework template by its ID
+            var homeworkTemplate = await _context.Homeworks.FindAsync(homeworkId);
+            if (homeworkTemplate == null)
+                return NotFound();
+
+            // Find all corresponding student homeworks that match the template
+            var studentHomeworks = await _context.Homeworks
+                .Where(h => h.DisciplineId == homeworkTemplate.DisciplineId
+                            && h.IsTemplate == false
+                            && h.Title == homeworkTemplate.Title)
+                .ToListAsync();
+
+            // Delete the homework template
+            _context.Homeworks.Remove(homeworkTemplate);
+
+            // Delete the corresponding student homeworks
+            _context.Homeworks.RemoveRange(studentHomeworks);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "A aparut o eroare, tema nu a putut fi stearsa.");
+            }
+
+            return RedirectToAction(nameof(Homeworks));
+        }
     }
 }
