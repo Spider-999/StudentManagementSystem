@@ -190,5 +190,77 @@ namespace StudentManagementSystem.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditHomework(string homeworkId)
+        {
+            var homework = await _context.Homeworks.FindAsync(homeworkId);
+            if(homework == null)
+                return NotFound();
+
+            var model = new HomeworkViewModel
+            {
+                Id = homework.Id,
+                Title = homework.Title,
+                Description = homework.Description,
+                EndDate = homework.EndDate,
+                Mandatory = homework.Mandatory,
+                Penalty = homework.Penalty,
+                AfterEndUploadDate = homework.AfterEndDateUpload
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditHomework(HomeworkViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Query the professors homework template
+                var updatedHomeworkTemplate = await _context.Homeworks.FindAsync(model.Id);
+                if (updatedHomeworkTemplate == null)
+                    return NotFound();
+
+                // Query all of the students copies of the homework template that match the title of the homework template
+                var studentHomeworks = await _context.Homeworks
+                                            .Where(h => h.DisciplineId == updatedHomeworkTemplate.DisciplineId
+                                                                       && h.IsTemplate == false
+                                                                       && h.Title == updatedHomeworkTemplate.Title)
+                                            .ToListAsync();
+
+                // Update the homework template of the professor
+                updatedHomeworkTemplate.Title = model.Title;
+                updatedHomeworkTemplate.Description = model.Description;
+                updatedHomeworkTemplate.EndDate = model.EndDate;
+                updatedHomeworkTemplate.Mandatory = model.Mandatory;
+                updatedHomeworkTemplate.Penalty = model.Penalty;
+                updatedHomeworkTemplate.AfterEndDateUpload = model.AfterEndUploadDate;
+                _context.Update(updatedHomeworkTemplate);
+
+                // Update the homeworks for all of the students
+                foreach(var homework in studentHomeworks)
+                {
+                    homework.Title = model.Title;
+                    homework.Description = model.Description;
+                    homework.EndDate = model.EndDate;
+                    homework.Mandatory = model.Mandatory;
+                    homework.Penalty = model.Penalty;
+                    homework.AfterEndDateUpload = model.AfterEndUploadDate;
+                }
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "A aparut o eroare, schimbarile nu au avut efect.");
+                }
+                return RedirectToAction(nameof(Homeworks));
+            }
+
+            return View(model);
+        }
     }
 }

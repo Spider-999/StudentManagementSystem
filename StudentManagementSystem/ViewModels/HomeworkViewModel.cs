@@ -5,6 +5,7 @@ namespace StudentManagementSystem.ViewModels
     public class HomeworkViewModel
     {
         #region Private properties
+        private string? _id;
         private string? _title;
         private string? _description;
         private string? _content;
@@ -18,6 +19,11 @@ namespace StudentManagementSystem.ViewModels
         #endregion
 
         #region Getters & setters
+        public string? Id
+        {
+            get => _id;
+            set => _id = value;
+        }
         [Display(Name ="Titlu")]
         public string? Title
         {
