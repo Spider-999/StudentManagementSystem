@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.ViewModels;
 
 namespace StudentManagementSystem.Controllers
 {
@@ -58,12 +59,24 @@ namespace StudentManagementSystem.Controllers
             if (homework == null)
                 return NotFound();
 
-            return View(homework);
+            var model = new HomeworkViewModel
+            {
+                Id = homework.Id,
+                Title = homework.Title,
+                Content = homework.Content,
+                Description = homework.Description,
+                EndDate = homework.EndDate,
+                Mandatory = homework.Mandatory,
+                Penalty = homework.Penalty,
+                AfterEndUploadDate = homework.AfterEndDateUpload
+            };
+
+            return View(model);
         }
 
         // TODO: Create a homework viewmodel for this
         [HttpPost]
-        public async Task<IActionResult> EditHomework(Homework homework)
+        public async Task<IActionResult> EditHomework(HomeworkViewModel homework)
         {
             if(ModelState.IsValid)
             {
@@ -81,7 +94,7 @@ namespace StudentManagementSystem.Controllers
                 {
                     ModelState.AddModelError("", "A aparut o eroare, schimbarile nu au avut efect.");
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Homework));
             }
 
             return View(homework);
