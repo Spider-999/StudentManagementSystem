@@ -11,6 +11,7 @@ namespace StudentManagementSystem.Data
         private DbSet<Professor> _professors;
         private DbSet<Discipline> _disciplines;
         private DbSet<Homework> _homeworks;
+        private DbSet<Project> _projects;
         private DbSet<StudentDiscipline> _studentDisciplines;
         #endregion
 
@@ -35,6 +36,13 @@ namespace StudentManagementSystem.Data
             get => _homeworks;
             set => _homeworks = value;
         }
+
+        public DbSet<Project> Projects
+        {
+            get => _projects;
+            set => _projects = value;
+        }
+
         public DbSet<StudentDiscipline> StudentDisciplines
         {
             get => _studentDisciplines;
@@ -82,6 +90,13 @@ namespace StudentManagementSystem.Data
                 .HasMany(d => d.Professors)
                 .WithOne(p => p.Discipline)
                 .HasForeignKey(p => p.DisciplineId);
+
+            // One to many relationship between homework project and project files
+            builder.Entity<Project>()
+                .HasMany(p => p.ProjectFiles)
+                .WithOne(h => h.Homework)
+                .HasForeignKey(k => k.HomeworkID);
+                
 
             // Dummy data
             builder.Entity<Discipline>().HasData(
