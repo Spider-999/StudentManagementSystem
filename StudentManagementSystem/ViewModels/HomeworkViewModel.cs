@@ -16,6 +16,7 @@ namespace StudentManagementSystem.ViewModels
         private bool? _mandatory;
         private double? _penalty;
         private bool? _afterEndDateUpload;
+        private string? _homeworkType;
         #endregion
 
         #region Getters & setters
@@ -92,6 +93,13 @@ namespace StudentManagementSystem.ViewModels
         {
             get => _afterEndDateUpload;
             set => _afterEndDateUpload = value;
+        }
+
+        [Display(Name ="Tipul temei")]
+        public string? HomeworkType
+        {
+            get => _homeworkType;
+            set => _homeworkType = value;
         }
         #endregion
     }

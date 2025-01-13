@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250105155159_StudentDisciplineDummyData")]
-    partial class StudentDisciplineDummyData
+    [Migration("20250113143440_DatabaseReset")]
+    partial class DatabaseReset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -184,52 +184,100 @@ namespace StudentManagementSystem.Migrations
                         {
                             Id = "2",
                             Name = "Physics"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Name = "ComputerScience"
                         });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("AfterEndDateUpload")
+                    b.Property<bool?>("AfterEndDateUpload")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DisciplineId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Grade")
+                    b.Property<double?>("Grade")
                         .HasColumnType("float");
 
-                    b.Property<bool>("Mandatory")
+                    b.Property<string>("HomeworkType")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<bool?>("IsTemplate")
                         .HasColumnType("bit");
 
-                    b.Property<double>("Penalty")
+                    b.Property<bool?>("Mandatory")
+                        .HasColumnType("bit");
+
+                    b.Property<double?>("Penalty")
                         .HasColumnType("float");
 
-                    b.Property<bool>("Status")
+                    b.Property<bool?>("Status")
                         .HasColumnType("bit");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DisciplineId");
 
+                    b.HasIndex("StudentId");
+
                     b.ToTable("Homeworks");
+
+                    b.HasDiscriminator<string>("HomeworkType").HasValue("Homework");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HomeworkID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HomeworkID");
+
+                    b.ToTable("ProjectFile");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
@@ -245,13 +293,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("StudentDisciplines");
-
-                    b.HasData(
-                        new
-                        {
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            DisciplineId = "1"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
@@ -325,6 +366,13 @@ namespace StudentManagementSystem.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.Project", b =>
+                {
+                    b.HasBaseType("StudentManagementSystem.Models.Homework");
+
+                    b.HasDiscriminator().HasValue("Project");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
                 {
                     b.HasBaseType("StudentManagementSystem.Models.User");
@@ -339,7 +387,7 @@ namespace StudentManagementSystem.Migrations
 
                     b.HasIndex("DisciplineId");
 
-                    b.ToTable("Professor", (string)null);
+                    b.ToTable("Professors", (string)null);
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
@@ -410,11 +458,26 @@ namespace StudentManagementSystem.Migrations
                 {
                     b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
                         .WithMany("Homeworks")
-                        .HasForeignKey("DisciplineId")
+                        .HasForeignKey("DisciplineId");
+
+                    b.HasOne("StudentManagementSystem.Models.Student", "Student")
+                        .WithMany("Homeworks")
+                        .HasForeignKey("StudentId");
+
+                    b.Navigation("Discipline");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Project", "Homework")
+                        .WithMany("ProjectFiles")
+                        .HasForeignKey("HomeworkID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Discipline");
+                    b.Navigation("Homework");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
@@ -471,8 +534,15 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("StudentDisciplines");
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.Project", b =>
+                {
+                    b.Navigation("ProjectFiles");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
                 {
+                    b.Navigation("Homeworks");
+
                     b.Navigation("StudentDisciplines");
                 });
 #pragma warning restore 612, 618

@@ -210,16 +210,16 @@ namespace StudentManagementSystem.Migrations
                     b.Property<string>("DisciplineId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
+
+                    b.Property<string>("HomeworkType")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<bool?>("IsTemplate")
                         .HasColumnType("bit");
@@ -247,39 +247,9 @@ namespace StudentManagementSystem.Migrations
 
                     b.ToTable("Homeworks");
 
-                    b.HasDiscriminator().HasValue("Homework");
+                    b.HasDiscriminator<string>("HomeworkType").HasValue("Homework");
 
                     b.UseTphMappingStrategy();
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AfterEndDateUpload = false,
-                            Content = "",
-                            Description = "Add 2+2",
-                            DisciplineId = "1",
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            Title = "Math1"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            AfterEndDateUpload = false,
-                            Content = "",
-                            Description = "F=m x _?",
-                            DisciplineId = "2",
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            Title = "Physics"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
@@ -320,28 +290,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("StudentDisciplines");
-
-                    b.HasData(
-                        new
-                        {
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            DisciplineId = "1"
-                        },
-                        new
-                        {
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            DisciplineId = "2"
-                        },
-                        new
-                        {
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            DisciplineId = "1"
-                        },
-                        new
-                        {
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            DisciplineId = "2"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
