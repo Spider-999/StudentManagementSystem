@@ -58,7 +58,7 @@ namespace StudentManagementSystem.Data
             // properties but I didnt want to mix them all together because
             // the students and professors have different properties.
             builder.Entity<Student>().ToTable("Students");
-            builder.Entity<Professor>().ToTable("Professor");
+            builder.Entity<Professor>().ToTable("Professors");
 
             //The necessary methods for creating the many to many relationship between Student and Discipline and specifying the foreign keys
             builder.Entity<StudentDiscipline>().HasKey(sd => new { sd.StudentId, sd.DisciplineId });
@@ -76,6 +76,12 @@ namespace StudentManagementSystem.Data
                 HasMany(h => h.Homeworks).
                 WithOne(s => s.Student).
                 HasForeignKey(f => f.StudentId);
+
+            // One to many relationship between discipline and professors
+            builder.Entity<Discipline>()
+                .HasMany(d => d.Professors)
+                .WithOne(p => p.Discipline)
+                .HasForeignKey(p => p.DisciplineId);
 
             // Dummy data
             builder.Entity<Discipline>().HasData(

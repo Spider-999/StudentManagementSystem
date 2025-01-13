@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagementSystem.Data;
 
@@ -11,9 +12,11 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250112191302_OneToManyProfessorsDisciplines")]
+    partial class OneToManyProfessorsDisciplines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,7 +195,6 @@ namespace StudentManagementSystem.Migrations
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool?>("AfterEndDateUpload")
@@ -216,18 +218,9 @@ namespace StudentManagementSystem.Migrations
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
 
-<<<<<<< HEAD
                     b.Property<bool?>("Mandatory")
                         .HasColumnType("bit");
 
-=======
-                    b.Property<bool?>("IsTemplate")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("Mandatory")
-                        .HasColumnType("bit");
-
->>>>>>> Hary
                     b.Property<double?>("Penalty")
                         .HasColumnType("float");
 
@@ -247,8 +240,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Homeworks");
-<<<<<<< HEAD
-=======
 
                     b.HasData(
                         new
@@ -279,7 +270,6 @@ namespace StudentManagementSystem.Migrations
                             StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
                             Title = "Physics"
                         });
->>>>>>> Hary
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
@@ -295,6 +285,28 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("StudentDisciplines");
+
+                    b.HasData(
+                        new
+                        {
+                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
+                            DisciplineId = "1"
+                        },
+                        new
+                        {
+                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
+                            DisciplineId = "2"
+                        },
+                        new
+                        {
+                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
+                            DisciplineId = "1"
+                        },
+                        new
+                        {
+                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
+                            DisciplineId = "2"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
