@@ -153,25 +153,7 @@ namespace StudentManagementSystem.Controllers
                 }
 
                 // Add the homework for every student in the corresponding discipline
-                List<Homework> homeworks = new List<Homework>();
-                foreach (var student in students)
-                {
-                    Homework homework = new Homework
-                    {
-                        Title = model.Title,
-                        Description = model.Description,
-                        Content = string.Empty,
-                        Grade = 0.00,
-                        Status = false,
-                        Mandatory = model.Mandatory,
-                        Penalty = model.Penalty,
-                        AfterEndDateUpload = model.AfterEndUploadDate,
-                        DisciplineId = professor.DisciplineId,
-                        StudentId = student.Id,
-                        IsTemplate = false
-                    };
-                    homeworks.Add(homework);
-                }
+                List<Homework> homeworks = CreateHomeworkType(model, professor, students);
 
                 try
                 {
@@ -189,6 +171,55 @@ namespace StudentManagementSystem.Controllers
             }
 
             return View(model);
+        }
+
+        public List<Homework> CreateHomeworkType(HomeworkViewModel model, Professor professor, List<Student> students)
+        {
+            List<Homework> homeworks = new List<Homework>();
+            switch (model.HomeworkType)
+            {
+                case "Assignment":
+                    foreach (var student in students)
+                    {
+                        Homework homework = new Homework
+                        {
+                            Title = model.Title,
+                            Description = model.Description,
+                            Content = string.Empty,
+                            Grade = 0.00,
+                            Status = false,
+                            Mandatory = model.Mandatory,
+                            Penalty = model.Penalty,
+                            AfterEndDateUpload = model.AfterEndUploadDate,
+                            DisciplineId = professor.DisciplineId,
+                            StudentId = student.Id,
+                            IsTemplate = false
+                        };
+                        homeworks.Add(homework);
+                    }
+                    break;
+                case "Project":
+                    foreach (var student in students)
+                    {
+                        Homework homework = new Project
+                        {
+                            Title = model.Title,
+                            Description = model.Description,
+                            Content = string.Empty,
+                            Grade = 0.00,
+                            Status = false,
+                            Mandatory = model.Mandatory,
+                            Penalty = model.Penalty,
+                            AfterEndDateUpload = model.AfterEndUploadDate,
+                            DisciplineId = professor.DisciplineId,
+                            StudentId = student.Id,
+                            IsTemplate = false
+                        };
+                        homeworks.Add(homework);
+                    }
+                    break;
+            }
+            return homeworks;
         }
 
         [HttpGet]

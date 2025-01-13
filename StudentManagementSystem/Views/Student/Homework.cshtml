@@ -18,8 +18,20 @@ else
         <ul>
             @foreach (var homework in Model)
             {
-                <li><a asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">@homework.Title</a> - @homework.Description</li>
+                
+                <li><a asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">@homework.Title</a> - @homework.Description
+                @if(homework is StudentManagementSystem.Models.Project)
+                {
+                    <a asp-controller="Student" asp-action="UploadProjectFiles" asp-route-projectID="@homework.Id" class="btn btn-primary">Incarca proiectul</a>
+                }
+                </li>
             }
         </ul>
     </th>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

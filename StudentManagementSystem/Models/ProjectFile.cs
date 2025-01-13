@@ -8,9 +8,10 @@ namespace StudentManagementSystem.Models
         #region Private properties
         private string _id;
         private string _fileName;
-        private string _filePath;
-        private string _homeworkID;
-        private Project homework;
+        // An array of bytes to store the file in the DB
+        private byte[] _fileContent;
+        private string _projectID;
+        private Project _project;
         #endregion
 
         #region Getters & Setters
@@ -30,25 +31,25 @@ namespace StudentManagementSystem.Models
         }
 
         [Required]
-        public string FilePath
+        public byte[] FileContent
         {
-            get => _filePath;
-            set => _filePath = value;
+            get => _fileContent;
+            set => _fileContent = value;
         }
         #endregion
 
         #region Database relationships
-        public string HomeworkID
+        public string ProjectID
         {
-            get => _homeworkID;
-            set => _homeworkID = value;
+            get => _projectID;
+            set => _projectID = value;
         }
 
-        [ForeignKey("HomeworkID")]
-        public Project Homework
+        [ForeignKey("ProjectID")]
+        public Project Project
         {
-            get => homework;
-            set => homework = value;
+            get => _project;
+            set => _project = value;
         }
         #endregion
     }
