@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.ViewModels;
+using System.IO.Compression;
 
 namespace StudentManagementSystem.Controllers
 {
@@ -326,6 +327,39 @@ namespace StudentManagementSystem.Controllers
             }
 
             return RedirectToAction(nameof(Homeworks));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadProjectFiles(string projectId)
+        {
+            var projectFiles = await _context.ProjectFiles
+                                    .Where(p => p.ProjectID == projectId)
+                                    .ToListAsync();
+            if(projectFiles == null)
+                return NotFound();
+
+            // To read and write the byte array data of the file conten
+            using (var memoryStream = new MemoryStream())
+            {
+                // Use zip archive to download all of the project files for the professor
+                using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create))
+                {
+                    foreach(var file in projectFiles)
+                    {
+                        // Create the zip archive with the name of the file
+                        var zip = zipArchive.CreateEntry(file.FileName, CompressionLevel.Optimal);
+                        using(var zipStream = zip.Open())
+                        {
+                            await zipStream.WriteAsync(file.FileContent, 0, file.FileContent.Length);
+                        }
+                    }
+                }
+                // Create a random name for the zip file
+                var zipName = Path.GetTempFileName() + ".zip";
+                // Return the file with the specified MIME(indicates the type of a document)
+                // type of application/zip
+                return File(memoryStream.ToArray(),"applcation/zip", zipName);
+            }
         }
     }
 }

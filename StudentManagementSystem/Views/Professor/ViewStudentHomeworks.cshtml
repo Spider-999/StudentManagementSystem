@@ -31,6 +31,12 @@ else
                     <td>@homework.EndDate?.ToString("yyyy-MM-dd")</td>
                     <td>@homework.Grade</td>
                     <td>@homework.Status</td>
+                    @if (homework is StudentManagementSystem.Models.Project)
+                    {
+                        <td>
+                        <a asp-controller="Professor" asp-action="DownloadProjectFiles" asp-route-projectId="@homework.Id" class="btn btn-primary btn-sm">Descarca fisierele</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
