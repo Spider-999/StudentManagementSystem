@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class DatabaseReset : Migration
+    public partial class QuizAndQuizQuestions : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -276,20 +276,41 @@ namespace StudentManagementSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProjectFile",
+                name: "ProjectFiles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HomeworkID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    FileContent = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ProjectID = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectFile", x => x.Id);
+                    table.PrimaryKey("PK_ProjectFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProjectFile_Homeworks_HomeworkID",
-                        column: x => x.HomeworkID,
+                        name: "FK_ProjectFiles_Homeworks_ProjectID",
+                        column: x => x.ProjectID,
+                        principalTable: "Homeworks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuizQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Question = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Answers = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorrectAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    QuizID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuizQuestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuizQuestions_Homeworks_QuizID",
+                        column: x => x.QuizID,
                         principalTable: "Homeworks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -300,9 +321,9 @@ namespace StudentManagementSystem.Migrations
                 columns: new[] { "Id", "GradeAverage", "Name" },
                 values: new object[,]
                 {
-                    { "1", null, "Mathematics" },
-                    { "2", null, "Physics" },
-                    { "3", null, "ComputerScience" }
+                    { "1", null, "Matematica" },
+                    { "2", null, "Fizica" },
+                    { "3", null, "Programare" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -360,9 +381,14 @@ namespace StudentManagementSystem.Migrations
                 column: "DisciplineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectFile_HomeworkID",
-                table: "ProjectFile",
-                column: "HomeworkID");
+                name: "IX_ProjectFiles_ProjectID",
+                table: "ProjectFiles",
+                column: "ProjectID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizQuestions_QuizID",
+                table: "QuizQuestions",
+                column: "QuizID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentDisciplines_DisciplineId",
@@ -392,7 +418,10 @@ namespace StudentManagementSystem.Migrations
                 name: "Professors");
 
             migrationBuilder.DropTable(
-                name: "ProjectFile");
+                name: "ProjectFiles");
+
+            migrationBuilder.DropTable(
+                name: "QuizQuestions");
 
             migrationBuilder.DropTable(
                 name: "StudentDisciplines");
