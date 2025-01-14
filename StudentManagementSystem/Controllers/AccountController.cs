@@ -45,6 +45,8 @@ namespace StudentManagementSystem.Controllers
             // Attempt to create the user in the database and assign the selected role to the user
             var registerAttempt = await _userManager.CreateAsync(user, model.Password);
             var roleAssignAttempt = await _userManager.AddToRoleAsync(user, model.Role);
+            if(await _userManager.IsInRoleAsync(user, "Student"))
+                await AddStudentDisciplinesOnRegister(user);
 
             if (registerAttempt.Succeeded && roleAssignAttempt.Succeeded)
             {
@@ -58,11 +60,9 @@ namespace StudentManagementSystem.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                // If the model binding and form submission is not valid, return the view with the model
                 return View(model);
             }
-
-            // If the model binding and form submission is not valid, return the view with the model
-            return View(model);
         }
         #endregion
 
@@ -148,6 +148,22 @@ namespace StudentManagementSystem.Controllers
                     return null;
             }
             return user;
+        }
+
+        public async Task AddStudentDisciplinesOnRegister(User student)
+        {
+                var disciplines = await _context.Disciplines.ToListAsync();
+                // At registration add the student to all the student disciplines that exist
+                foreach (var discipline in disciplines)
+                {
+                    var studentDiscipline = new StudentDiscipline
+                    {
+                        StudentId = student.Id,
+                        DisciplineId = discipline.Id
+                    };
+                    _context.StudentDisciplines.Add(studentDiscipline);
+                }
+                await _context.SaveChangesAsync();
         }
 
         public async Task<IActionResult> RedirectBasedOnRoleAsync(LoginViewModel model)

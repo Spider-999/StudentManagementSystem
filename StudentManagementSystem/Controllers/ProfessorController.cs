@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.ViewModels;
+using System.IO.Compression;
 
 namespace StudentManagementSystem.Controllers
 {
@@ -27,6 +29,7 @@ namespace StudentManagementSystem.Controllers
         }
         #endregion
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -35,8 +38,6 @@ namespace StudentManagementSystem.Controllers
                 return NotFound();
             return View(user);
         }
-<<<<<<< HEAD
-=======
 
         [HttpGet]
         public async Task<IActionResult> ViewStudents()
@@ -136,6 +137,8 @@ namespace StudentManagementSystem.Controllers
                         Content = string.Empty,
                         Grade = 0.00,
                         Status = false,
+                        CreationDate = DateTime.Now,
+                        EndDate = model.EndDate,
                         Mandatory = model.Mandatory,
                         Penalty = model.Penalty,
                         AfterEndDateUpload = model.AfterEndUploadDate,
@@ -153,25 +156,7 @@ namespace StudentManagementSystem.Controllers
                 }
 
                 // Add the homework for every student in the corresponding discipline
-                List<Homework> homeworks = new List<Homework>();
-                foreach (var student in students)
-                {
-                    Homework homework = new Homework
-                    {
-                        Title = model.Title,
-                        Description = model.Description,
-                        Content = string.Empty,
-                        Grade = 0.00,
-                        Status = false,
-                        Mandatory = model.Mandatory,
-                        Penalty = model.Penalty,
-                        AfterEndDateUpload = model.AfterEndUploadDate,
-                        DisciplineId = professor.DisciplineId,
-                        StudentId = student.Id,
-                        IsTemplate = false
-                    };
-                    homeworks.Add(homework);
-                }
+                List<Homework> homeworks = CreateHomeworkType(model, professor, students);
 
                 try
                 {
@@ -189,6 +174,59 @@ namespace StudentManagementSystem.Controllers
             }
 
             return View(model);
+        }
+
+        public List<Homework> CreateHomeworkType(HomeworkViewModel model, Professor professor, List<Student> students)
+        {
+            List<Homework> homeworks = new List<Homework>();
+            switch (model.HomeworkType)
+            {
+                case "Assignment":
+                    foreach (var student in students)
+                    {
+                        Homework homework = new Homework
+                        {
+                            Title = model.Title,
+                            Description = model.Description,
+                            Content = string.Empty,
+                            Grade = 0.00,
+                            Status = false,
+                            CreationDate = DateTime.Now,
+                            EndDate = model.EndDate,
+                            Mandatory = model.Mandatory,
+                            Penalty = model.Penalty,
+                            AfterEndDateUpload = model.AfterEndUploadDate,
+                            DisciplineId = professor.DisciplineId,
+                            StudentId = student.Id,
+                            IsTemplate = false
+                        };
+                        homeworks.Add(homework);
+                    }
+                    break;
+                case "Project":
+                    foreach (var student in students)
+                    {
+                        Homework homework = new Project
+                        {
+                            Title = model.Title,
+                            Description = model.Description,
+                            Content = string.Empty,
+                            Grade = 0.00,
+                            Status = false,
+                            CreationDate = DateTime.Now,
+                            EndDate = model.EndDate,
+                            Mandatory = model.Mandatory,
+                            Penalty = model.Penalty,
+                            AfterEndDateUpload = model.AfterEndUploadDate,
+                            DisciplineId = professor.DisciplineId,
+                            StudentId = student.Id,
+                            IsTemplate = false
+                        };
+                        homeworks.Add(homework);
+                    }
+                    break;
+            }
+            return homeworks;
         }
 
         [HttpGet]
@@ -262,6 +300,72 @@ namespace StudentManagementSystem.Controllers
 
             return View(model);
         }
->>>>>>> Hary
+
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteHomework(string homeworkId)
+        {
+            // Find the homework template by its ID
+            var homeworkTemplate = await _context.Homeworks.FindAsync(homeworkId);
+            if (homeworkTemplate == null)
+                return NotFound();
+
+            // Find all corresponding student homeworks that match the template
+            var studentHomeworks = await _context.Homeworks
+                .Where(h => h.DisciplineId == homeworkTemplate.DisciplineId
+                            && h.IsTemplate == false
+                            && h.Title == homeworkTemplate.Title)
+                .ToListAsync();
+
+            // Delete the homework template
+            _context.Homeworks.Remove(homeworkTemplate);
+
+            // Delete the corresponding student homeworks
+            _context.Homeworks.RemoveRange(studentHomeworks);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "A aparut o eroare, tema nu a putut fi stearsa.");
+            }
+
+            return RedirectToAction(nameof(Homeworks));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadProjectFiles(string projectId)
+        {
+            var projectFiles = await _context.ProjectFiles
+                                    .Where(p => p.ProjectID == projectId)
+                                    .ToListAsync();
+            if(projectFiles == null)
+                return NotFound();
+
+            // To read and write the byte array data of the file conten
+            using (var memoryStream = new MemoryStream())
+            {
+                // Use zip archive to download all of the project files for the professor
+                using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create))
+                {
+                    foreach(var file in projectFiles)
+                    {
+                        // Create the zip archive with the name of the file
+                        var zip = zipArchive.CreateEntry(file.FileName, CompressionLevel.Optimal);
+                        using(var zipStream = zip.Open())
+                        {
+                            await zipStream.WriteAsync(file.FileContent, 0, file.FileContent.Length);
+                        }
+                    }
+                }
+                // Create a random name for the zip file
+                var zipName = Path.GetTempFileName() + ".zip";
+                // Return the file with the specified MIME(indicates the type of a document)
+                // type of application/zip
+                return File(memoryStream.ToArray(),"applcation/zip", zipName);
+            }
+        }
     }
 }

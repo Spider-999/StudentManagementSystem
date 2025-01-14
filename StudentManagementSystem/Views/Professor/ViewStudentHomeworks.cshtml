@@ -1,29 +1,23 @@
 ﻿@model List<StudentManagementSystem.Models.Homework>
 
 @{
-    ViewData["Title"] = $"Temele la {ViewBag.DisciplineName}";
+    ViewData["Title"] = $"Tema Studentului {@ViewBag.StudentName}";
 }
 
-<h2>Toate temele la @ViewBag.DisciplineName</h2>
+<h2>Temele pentru @ViewBag.StudentName</h2>
 
 @if (!Model.Any())
 {
-    <p>Nu exista teme pentru aceasta disciplina.</p>
-    <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateHomework">
-        Creeaza o tema
-    </a>
+    <p>Nu au fost gasite teme pentru acest student.</p>
 }
 else
 {
-    <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateHomework">
-        Creeaza o tema
-    </a>
     <table class="table">
         <thead>
             <tr>
                 <th>Titlu</th>
                 <th>Descriere</th>
-                <th>Data creeari</th>
+                <th>Data crearii</th>
                 <th>Termen limita</th>
                 <th>Nota</th>
                 <th>Stare</th>
@@ -56,14 +50,12 @@ else
                         <td>Completata</td>
                     }
 
-                    <td>
-                        <a class="btn btn-danger" asp-route-homeworkId="@homework.Id" asp-controller="Professor" asp-action="DeleteHomework">
-                            Sterge
-                        </a>
-                        <a class="btn btn-primary" asp-route-homeworkId="@homework.Id" asp-controller="Professor" asp-action="EditHomework">
-                            Editeaza
-                        </a>
-                    </td>
+                    @if (homework is StudentManagementSystem.Models.Project)
+                    {
+                        <td>
+                        <a asp-controller="Professor" asp-action="DownloadProjectFiles" asp-route-projectId="@homework.Id" class="btn btn-primary btn-sm">Descarca fisierele</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
