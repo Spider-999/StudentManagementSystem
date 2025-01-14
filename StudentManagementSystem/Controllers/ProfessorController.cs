@@ -299,5 +299,159 @@ namespace StudentManagementSystem.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteHomework(string homeworkId)
+        {
+            // Find the homework template by its ID
+            var homeworkTemplate = await _context.Homeworks.FindAsync(homeworkId);
+            if (homeworkTemplate == null)
+                return NotFound();
+
+            // Find all corresponding student homeworks that match the template
+            var studentHomeworks = await _context.Homeworks
+                .Where(h => h.DisciplineId == homeworkTemplate.DisciplineId
+                            && h.IsTemplate == false
+                            && h.Title == homeworkTemplate.Title)
+                .ToListAsync();
+
+            // Delete the homework template
+            _context.Homeworks.Remove(homeworkTemplate);
+
+            // Delete the corresponding student homeworks
+            _context.Homeworks.RemoveRange(studentHomeworks);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "A aparut o eroare, tema nu a putut fi stearsa.");
+            }
+
+            return RedirectToAction(nameof(Homeworks));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadProjectFiles(string projectId)
+        {
+            var projectFiles = await _context.ProjectFiles
+                                    .Where(p => p.ProjectID == projectId)
+                                    .ToListAsync();
+            if (projectFiles == null)
+                return NotFound();
+            // To read and write the byte array data of the file conten
+            using (var memoryStream = new MemoryStream())
+            {
+                // Use zip archive to download all of the project files for the professor
+                using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create))
+                {
+                    foreach (var file in projectFiles)
+                    {
+                        // Create the zip archive with the name of the file
+                        var zip = zipArchive.CreateEntry(file.FileName, CompressionLevel.Optimal);
+                        using (var zipStream = zip.Open())
+                        {
+                            await zipStream.WriteAsync(file.FileContent, 0, file.FileContent.Length);
+                        }
+                    }
+                }
+                // Create a random name for the zip file
+                var zipName = Path.GetTempFileName() + ".zip";
+                // Return the file with the specified MIME(indicates the type of a document)
+                // type of application/zip
+                return File(memoryStream.ToArray(), "applcation/zip", zipName);
+            }
+        }
+    
+
+        [HttpGet]
+        public IActionResult CreateQuiz()
+        {
+            return View(new CreateQuizViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateQuiz(CreateQuizViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                    return NotFound();
+                
+                // Find the professor and include the discipline in the query because we need it for 
+                // the quiz creation
+                var professor = await _context.Professors
+                                      .Include(d => d.Discipline)
+                                      .FirstOrDefaultAsync(p => p.Id == user.Id);
+                if (professor == null)
+                    return NotFound();
+
+
+                var students = await _context.Students.ToListAsync();
+                if (students == null)
+                    return NotFound();
+
+                // Add template quiz homework for the professor view
+                var templateQuiz = new Quiz
+                {
+                    Title = model.Title,
+                    Description = model.Description,
+                    DisciplineId = professor.DisciplineId,
+                    IsTemplate = true
+                };
+                _context.Quizzes.Add(templateQuiz);
+                await _context.SaveChangesAsync();
+
+                // Add quiz questions for the template quiz
+                foreach(var questionModel in model.Questions)
+                {
+                    var quizQuestion = new QuizQuestion
+                    {
+                        Question = questionModel.Question,
+                        Answers = questionModel.Answers,
+                        CorrectAnswer = questionModel.CorrectAnswer,
+                        QuizID = templateQuiz.Id
+                    };
+                    _context.QuizQuestions.Add(quizQuestion);
+                }
+                await _context.SaveChangesAsync();
+
+                // Add quizzes and questions to the quizes of the students
+                foreach(var student in students)
+                {
+                    // Create a quiz for the student
+                    var quiz = new Quiz
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        DisciplineId = professor.DisciplineId,
+                        StudentId = student.Id,
+                        IsTemplate = false
+                    };
+                    _context.Quizzes.Add(quiz);
+                    await _context.SaveChangesAsync();
+
+                    // Add quiz questions
+                    foreach(var questionModel in model.Questions)
+                    {
+                        var question = new QuizQuestion
+                        {
+                            Question = questionModel.Question,
+                            Answers = questionModel.Answers,
+                            CorrectAnswer = questionModel.CorrectAnswer,
+                            QuizID = quiz.Id
+                        };
+
+                        _context.QuizQuestions.Add(question);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
+            return RedirectToAction(nameof(Homeworks));
+        }
     }
 }
