@@ -192,6 +192,7 @@ namespace StudentManagementSystem.Migrations
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool?>("AfterEndDateUpload")
@@ -215,6 +216,14 @@ namespace StudentManagementSystem.Migrations
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
 
+                    b.Property<string>("HomeworkType")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<bool?>("IsTemplate")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("Mandatory")
                         .HasColumnType("bit");
 
@@ -237,6 +246,35 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Homeworks");
+
+                    b.HasDiscriminator<string>("HomeworkType").HasValue("Homework");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HomeworkID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HomeworkID");
+
+                    b.ToTable("ProjectFile");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
@@ -323,6 +361,13 @@ namespace StudentManagementSystem.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Project", b =>
+                {
+                    b.HasBaseType("StudentManagementSystem.Models.Homework");
+
+                    b.HasDiscriminator().HasValue("Project");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
@@ -421,6 +466,17 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Project", "Homework")
+                        .WithMany("ProjectFiles")
+                        .HasForeignKey("HomeworkID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Homework");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
                 {
                     b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
@@ -473,6 +529,11 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Professors");
 
                     b.Navigation("StudentDisciplines");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Project", b =>
+                {
+                    b.Navigation("ProjectFiles");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>

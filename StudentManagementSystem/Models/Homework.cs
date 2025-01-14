@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentManagementSystem.Models
 {
@@ -18,9 +19,12 @@ namespace StudentManagementSystem.Models
         private bool? _mandatory;
         private double? _penalty;
         private bool? _afterEndDateUpload;
+        private bool? _isTemplate;
         #endregion
 
         #region Getters & Setters
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id
         {
             get => _id;
@@ -76,6 +80,12 @@ namespace StudentManagementSystem.Models
         {
             get => _content;
             set => _content = value;
+        }
+
+        public bool? IsTemplate
+        {
+            get => _isTemplate;
+            set => _isTemplate = value;
         }
         #endregion
 
