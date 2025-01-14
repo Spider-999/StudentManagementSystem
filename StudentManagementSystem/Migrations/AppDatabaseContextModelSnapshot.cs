@@ -237,36 +237,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Homeworks");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AfterEndDateUpload = false,
-                            Content = "",
-                            Description = "Add 2+2",
-                            DisciplineId = "1",
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            Title = "Math1"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            AfterEndDateUpload = false,
-                            Content = "",
-                            Description = "F=m x _?",
-                            DisciplineId = "2",
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            Title = "Physics"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
@@ -282,28 +252,6 @@ namespace StudentManagementSystem.Migrations
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("StudentDisciplines");
-
-                    b.HasData(
-                        new
-                        {
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            DisciplineId = "1"
-                        },
-                        new
-                        {
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            DisciplineId = "2"
-                        },
-                        new
-                        {
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            DisciplineId = "1"
-                        },
-                        new
-                        {
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            DisciplineId = "2"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
