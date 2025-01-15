@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 
@@ -11,7 +12,8 @@ builder.Services.AddControllersWithViews();
 
 // Add database connection
 builder.Services.AddDbContext<AppDatabaseContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+));
 
 // Add Identity setup
 builder.Services.AddIdentity<User, IdentityRole>(options =>

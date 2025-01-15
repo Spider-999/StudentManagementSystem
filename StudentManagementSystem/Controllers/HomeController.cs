@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,6 @@ namespace StudentManagementSystem.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<User> _userManager;
-
         public HomeController(ILogger<HomeController> logger, UserManager<User> userManager)
         {
             _logger = logger;
@@ -19,28 +19,29 @@ namespace StudentManagementSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Get the current user and their role/roles
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return View();
-
-            var userRole = await _userManager.GetRolesAsync(user);
-            if (userRole == null)
-                return View();
-
-            // Get the first role of the user and redirect them to the appropriate page
-            switch (userRole.First())
+            // This logic is for when the user closes the site
+            // and opens it again to redirect them to their specific role pages
+            // instead of seeing the Home controllers basic index page.
+            if(User.Identity.IsAuthenticated)
             {
-                // TODO: Move this to AccountController
-                case "Admin":
-                    return RedirectToAction("Index", "Admin");
-                case "Teacher":
-                    return RedirectToAction("Index", "Teacher");
-                case "Student":
-                    return RedirectToAction("Dashboard", "Student");
-                default:
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
                     return View();
+
+                if (await _userManager.IsInRoleAsync(user, "Student"))
+                {
+                    return RedirectToAction("Index", "Student");
+                }
+                else if (await _userManager.IsInRoleAsync(user, "Professor"))
+                {
+                    return RedirectToAction("Index", "Professor");
+                }
+                else if (await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
             }
+            return View();
         }
 
         public IActionResult Privacy()

@@ -5,7 +5,7 @@
         #region Private properties
         private string _id;
         private string _name;
-        private double _gradeAverage;
+        private double? _gradeAverage;
         #endregion
 
         #region Getters & Setters
@@ -19,7 +19,7 @@
             get => _name;
             set => _name = value;
         }
-        public double GradeAverage
+        public double? GradeAverage
         {
             get => _gradeAverage;
             set => _gradeAverage = value;

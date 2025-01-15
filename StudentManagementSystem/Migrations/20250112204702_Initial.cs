@@ -3,10 +3,16 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace StudentManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+    public partial class Initial : Migration
+========
+    public partial class DatabaseReset : Migration
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,6 +55,19 @@ namespace StudentManagementSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Disciplines",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GradeAverage = table.Column<double>(type: "float", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Disciplines", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +176,151 @@ namespace StudentManagementSystem.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    YearOfStudy = table.Column<int>(type: "int", nullable: false),
+                    GeneralGrade = table.Column<double>(type: "float", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Students_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+                name: "Professor",
+========
+                name: "Professors",
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Professors", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Professors_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Professors_Disciplines_DisciplineId",
+                        column: x => x.DisciplineId,
+                        principalTable: "Disciplines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Homeworks",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Grade = table.Column<double>(type: "float", nullable: true),
+                    Status = table.Column<bool>(type: "bit", nullable: true),
+                    Mandatory = table.Column<bool>(type: "bit", nullable: true),
+                    Penalty = table.Column<double>(type: "float", nullable: true),
+                    AfterEndDateUpload = table.Column<bool>(type: "bit", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+========
+                    IsTemplate = table.Column<bool>(type: "bit", nullable: true),
+                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    HomeworkType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false)
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Homeworks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Homeworks_Disciplines_DisciplineId",
+                        column: x => x.DisciplineId,
+                        principalTable: "Disciplines",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Homeworks_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentDisciplines",
+                columns: table => new
+                {
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentDisciplines", x => new { x.StudentId, x.DisciplineId });
+                    table.ForeignKey(
+                        name: "FK_StudentDisciplines_Disciplines_DisciplineId",
+                        column: x => x.DisciplineId,
+                        principalTable: "Disciplines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentDisciplines_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+========
+            migrationBuilder.CreateTable(
+                name: "ProjectFile",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HomeworkID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectFile", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProjectFile_Homeworks_HomeworkID",
+                        column: x => x.HomeworkID,
+                        principalTable: "Homeworks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
+            migrationBuilder.InsertData(
+                table: "Disciplines",
+                columns: new[] { "Id", "GradeAverage", "Name" },
+                values: new object[,]
+                {
+                    { "1", null, "Mathematics" },
+                    { "2", null, "Physics" },
+                    { "3", null, "ComputerScience" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -195,6 +359,41 @@ namespace StudentManagementSystem.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Homeworks_DisciplineId",
+                table: "Homeworks",
+                column: "DisciplineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Homeworks_StudentId",
+                table: "Homeworks",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+                name: "IX_Professor_DisciplineId",
+                table: "Professor",
+========
+                name: "IX_Professors_DisciplineId",
+                table: "Professors",
+                column: "DisciplineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectFile_HomeworkID",
+                table: "ProjectFile",
+                column: "HomeworkID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentDisciplines_DisciplineId",
+                table: "StudentDisciplines",
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
+                column: "DisciplineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentDisciplines_DisciplineId",
+                table: "StudentDisciplines",
+                column: "DisciplineId");
         }
 
         /// <inheritdoc />
@@ -216,7 +415,25 @@ namespace StudentManagementSystem.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Professors");
+
+            migrationBuilder.DropTable(
+                name: "ProjectFile");
+
+            migrationBuilder.DropTable(
+                name: "StudentDisciplines");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Homeworks");
+
+            migrationBuilder.DropTable(
+                name: "Disciplines");
+
+            migrationBuilder.DropTable(
+                name: "Students");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

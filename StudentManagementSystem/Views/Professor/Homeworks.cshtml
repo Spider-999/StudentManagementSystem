@@ -1,0 +1,71 @@
+﻿@model List<StudentManagementSystem.Models.Homework>
+
+@{
+    ViewData["Title"] = $"Temele la {ViewBag.DisciplineName}";
+}
+
+<h2>Toate temele la @ViewBag.DisciplineName</h2>
+
+@if (!Model.Any())
+{
+    <p>Nu exista teme pentru aceasta disciplina.</p>
+    <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateHomework">
+        Creeaza o tema
+    </a>
+}
+else
+{
+    <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateHomework">
+        Creeaza o tema
+    </a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titlu</th>
+                <th>Descriere</th>
+                <th>Data creeari</th>
+                <th>Termen limita</th>
+                <th>Nota</th>
+                <th>Stare</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var homework in Model)
+            {
+                <tr>
+                    <td>@homework.Title</td>
+                    <td>@homework.Description</td>
+                    <td>@homework.CreationDate</td>
+                    <td>@homework.EndDate</td>
+
+                    @if (homework.Grade == 0.00)
+                    {
+                        <td>Fara nota</td>
+                    }
+                    else
+                    {
+                        <td>@homework.Grade</td>
+                    }
+
+                    @if (homework.Status == false)
+                    {
+                        <td>Necompletata</td>
+                    }
+                    else
+                    {
+                        <td>Completata</td>
+                    }
+
+                    <td>
+                        <a class="btn btn-danger" asp-route-homeworkId="@homework.Id" asp-controller="Professor" asp-action="DeleteHomework">
+                            Sterge
+                        </a>
+                        <a class="btn btn-primary" asp-route-homeworkId="@homework.Id" asp-controller="Professor" asp-action="EditHomework">
+                            Editeaza
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
