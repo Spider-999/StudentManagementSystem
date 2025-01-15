@@ -12,7 +12,7 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250115171726_Initial")]
+    [Migration("20250115200607_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -227,6 +227,9 @@ namespace StudentManagementSystem.Migrations
 
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
+
+                    b.Property<bool?>("HasGrade")
+                        .HasColumnType("bit");
 
                     b.Property<string>("HomeworkType")
                         .IsRequired()

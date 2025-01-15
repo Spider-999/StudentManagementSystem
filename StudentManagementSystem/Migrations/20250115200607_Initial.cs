@@ -232,6 +232,7 @@ namespace StudentManagementSystem.Migrations
                     Penalty = table.Column<double>(type: "float", nullable: true),
                     AfterEndDateUpload = table.Column<bool>(type: "bit", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HasGrade = table.Column<bool>(type: "bit", nullable: true),
                     IsTemplate = table.Column<bool>(type: "bit", nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),

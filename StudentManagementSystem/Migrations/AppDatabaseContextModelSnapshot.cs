@@ -225,6 +225,9 @@ namespace StudentManagementSystem.Migrations
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
 
+                    b.Property<bool?>("HasGrade")
+                        .HasColumnType("bit");
+
                     b.Property<string>("HomeworkType")
                         .IsRequired()
                         .HasMaxLength(8)
