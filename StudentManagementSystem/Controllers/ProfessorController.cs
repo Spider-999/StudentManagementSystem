@@ -681,14 +681,14 @@ namespace StudentManagementSystem.Controllers
             // String builder is used to modify strings without creating new objects + increased performance
             var csvConvert = new StringBuilder();
             foreach(DataColumn column in dataTable.Columns)
-                csvConvert.Append(column.ColumnName + ",");
+                csvConvert.Append(column.ColumnName + ";");
             // Append default line terminator
             csvConvert.AppendLine();
 
             foreach(DataRow row in dataTable.Rows)
             {
                 foreach (var item in row.ItemArray)
-                    csvConvert.Append(item + ",");
+                    csvConvert.Append(item + ";");
                 csvConvert.AppendLine();
             }
 
