@@ -25,14 +25,15 @@ else
             @foreach(var student in Model)
             {
                 <tr>
-                    <td>
-                        <a asp-action="ViewStudentHomeworks" asp-route-studentId="@student.Id">
-                            @student.Name
-                        </a>
-                    </td>
+                    <td>@student.Name</td>
                     <td>@student.Email</td>
                     <td>@student.YearOfStudy</td>
                     <td>@student.GeneralGrade</td>
+                    <td>
+                    <a asp-action="ViewStudentHomeworks" asp-route-studentId="@student.Id" class="btn btn-primary">
+                        Vezi Temele 
+                    </a>
+                    </td>
                 </tr>
             }
         </tbody>

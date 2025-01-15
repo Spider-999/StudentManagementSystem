@@ -474,5 +474,44 @@ namespace StudentManagementSystem.Controllers
 
             return RedirectToAction(nameof(Homeworks));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GradeHomework(string homeworkId)
+        {
+            var homework = await _context.Homeworks.FindAsync(homeworkId);
+            if (homework == null)
+                return NotFound();
+
+            var model = new GradeHomeworkViewModel
+            {
+                Id = homework.Id,
+                Title = homework.Title,
+                Description = homework.Description,
+                Grade = (double)homework.Grade,
+                Comment = homework.Comment
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GradeHomework(GradeHomeworkViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var homework = await _context.Homeworks
+                                 .Include(h => h.Student)
+                                 .FirstOrDefaultAsync(h => h.Id == model.Id);
+            if (homework == null)
+                return NotFound();
+
+            homework.Grade = model.Grade;
+            homework.Comment = model.Comment;
+            _context.Update(homework);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(ViewStudentHomeworks), new { studentId = homework.StudentId });
+        }
     }
 }
