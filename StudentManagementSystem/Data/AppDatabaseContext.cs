@@ -14,6 +14,8 @@ namespace StudentManagementSystem.Data
         private DbSet<Project> _projects;
         private DbSet<ProjectFile> _projectsFile;
         private DbSet<StudentDiscipline> _studentDisciplines;
+        private DbSet<Quiz> _quizzes;
+        private DbSet<QuizQuestion> _quizQuestions;
         #endregion
 
         #region Getters & Setters
@@ -55,6 +57,18 @@ namespace StudentManagementSystem.Data
             get => _studentDisciplines;
             set => _studentDisciplines = value;
         }
+
+        public DbSet<Quiz> Quizzes
+        {
+            get => _quizzes;
+            set => _quizzes = value;
+        }
+
+        public DbSet<QuizQuestion> QuizQuestions
+        {
+            get => _quizQuestions;
+            set => _quizQuestions = value;
+        }
         #endregion
 
         #region Constructors
@@ -80,7 +94,8 @@ namespace StudentManagementSystem.Data
             builder.Entity<Homework>()
                 .HasDiscriminator<string>("HomeworkType")
                 .HasValue<Homework>("Homework")
-                .HasValue<Project>("Project");
+                .HasValue<Project>("Project")
+                .HasValue<Quiz>("Quiz");
 
             //The necessary methods for creating the many to many relationship between Student and Discipline and specifying the foreign keys
             builder.Entity<StudentDiscipline>().HasKey(sd => new { sd.StudentId, sd.DisciplineId });
@@ -110,6 +125,12 @@ namespace StudentManagementSystem.Data
                 .HasMany(p => p.ProjectFiles)
                 .WithOne(h => h.Project)
                 .HasForeignKey(k => k.ProjectID);
+
+            // One to many relationship between quizess and quiz questions.
+            builder.Entity<Quiz>()
+                .HasMany(qq => qq.QuizQuestions)
+                .WithOne(q => q.Quiz)
+                .HasForeignKey(k => k.QuizID);
                 
 
             // Here add all the disciplines that exist.

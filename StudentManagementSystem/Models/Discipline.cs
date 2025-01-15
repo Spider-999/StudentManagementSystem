@@ -6,6 +6,8 @@
         private string _id;
         private string _name;
         private double? _gradeAverage;
+        // Default calculation formula
+        private string? _gradeCalculationFormula = "MA1";
         #endregion
 
         #region Getters & Setters
@@ -23,6 +25,11 @@
         {
             get => _gradeAverage;
             set => _gradeAverage = value;
+        }
+        public string? GradeCalculationFormula
+        {
+            get => _gradeCalculationFormula;
+            set => _gradeCalculationFormula = value;
         }
         #endregion
 
@@ -52,5 +59,7 @@
         }
         #endregion
         #endregion
+
+
     }
 }

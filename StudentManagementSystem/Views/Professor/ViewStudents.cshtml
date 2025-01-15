@@ -1,7 +1,7 @@
 ﻿@model List<StudentManagementSystem.Models.Student>
 
 @{
-    ViewData["Title"] = "Student Inscrisi";
+    ViewData["Title"] = "Studenti Inscrisi";
 }
 
 <h3>Toti studentii inscrisi</h3>
@@ -12,27 +12,38 @@
 }
 else
 {
-    <table>
-        <thead>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-light">
             <tr>
-                <th>Nume</th>
-                <th>Email</th>
-                <th>Anul de studiu</th>
-                <th>Media generala</th>
+                <th class="p-3">Nume</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Anul de studiu</th>
+                <th class="p-3">Media generala</th>
+                @foreach(var student in Model[0].StudentDisciplines)
+                {
+                    <th class="p-3">Media la @student.Discipline.Name</th>
+                }
             </tr>
         </thead>
         <tbody>
             @foreach (var student in Model)
             {
                 <tr>
-                    <td>
-                        <a asp-action="ViewStudentHomeworks" asp-route-studentId="@student.Id">
-                            @student.Name
+                    <td class="p-3">@student.Name</td>
+                    <td class="p-3">@student.Email</td>
+                    <td class="p-3">@student.YearOfStudy</td>
+                    <td class="p-3">@student.GeneralGrade</td>
+                        @foreach (var studentDiscipline in student.StudentDisciplines)
+                        {
+                            <td class="p-3">
+                                    @studentDiscipline.GradeAverage
+                            </td>
+                        }
+                    <td class="p-3">
+                        <a asp-action="ViewStudentHomeworks" asp-route-studentId="@student.Id" class="btn btn-primary">
+                            Vezi Temele
                         </a>
                     </td>
-                    <td>@student.Email</td>
-                    <td>@student.YearOfStudy</td>
-                    <td>@student.GeneralGrade</td>
                 </tr>
             }
         </tbody>

@@ -21,6 +21,7 @@ namespace StudentManagementSystem.Models
         private bool? _afterEndDateUpload;
         private bool? _hasGrade;
         private bool? _isTemplate;
+        private string? _comment;
         #endregion
 
         #region Getters & Setters
@@ -93,6 +94,12 @@ namespace StudentManagementSystem.Models
         {
             get => _isTemplate;
             set => _isTemplate = value;
+        }
+
+        public string? Comment
+        {
+            get => _comment;
+            set => _comment = value;
         }
         #endregion
 
