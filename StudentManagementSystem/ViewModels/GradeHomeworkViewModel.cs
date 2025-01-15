@@ -8,6 +8,7 @@ namespace StudentManagementSystem.ViewModels
         private string _id;
         private string _title;
         private string _description;
+        private string _content;
         private double _grade;
         private string _comment;
         #endregion
@@ -29,6 +30,12 @@ namespace StudentManagementSystem.ViewModels
         {
             get => _description;
             set => _description = value;
+        }
+        [Display(Name ="Content")]
+        public string Content
+        {
+            get => _content;
+            set => _content = value;    
         }
         [Required(ErrorMessage ="Nota este necesara")]
         [Range(1, 10, ErrorMessage="Nota trebuie sa fie intre 1 si 10")]

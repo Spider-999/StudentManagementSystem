@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.ViewModels;
+using System.Data;
 using System.IO.Compression;
+using System.Text;
 
 namespace StudentManagementSystem.Controllers
 {
@@ -259,6 +261,7 @@ namespace StudentManagementSystem.Controllers
             {
                 Id = homework.Id,
                 Title = homework.Title,
+                Content = homework.Content,
                 Description = homework.Description,
                 EndDate = homework.EndDate,
                 Mandatory = homework.Mandatory,
@@ -288,6 +291,7 @@ namespace StudentManagementSystem.Controllers
 
                 // Update the homework template of the professor
                 updatedHomeworkTemplate.Title = model.Title;
+                updatedHomeworkTemplate.Content = model.Content;
                 updatedHomeworkTemplate.Description = model.Description;
                 updatedHomeworkTemplate.EndDate = model.EndDate;
                 updatedHomeworkTemplate.Mandatory = model.Mandatory;
@@ -300,6 +304,7 @@ namespace StudentManagementSystem.Controllers
                 {
                     homework.Title = model.Title;
                     homework.Description = model.Description;
+                    homework.Content = model.Content;
                     homework.EndDate = model.EndDate;
                     homework.Mandatory = model.Mandatory;
                     homework.Penalty = model.Penalty;
@@ -510,6 +515,7 @@ namespace StudentManagementSystem.Controllers
             {
                 Id = homework.Id,
                 Title = homework.Title,
+                Content = homework.Content,
                 Description = homework.Description,
                 Grade = (double)homework.Grade,
                 Comment = homework.Comment
@@ -639,5 +645,56 @@ namespace StudentManagementSystem.Controllers
             return Math.Round(generalGrade / studentDisciplines.Count, 2);
         }
         #endregion
+
+        [HttpGet]
+        public async Task<IActionResult> ExportGradesToCSV()
+        {
+            var students = await _context.Students
+                            .Include(sd => sd.StudentDisciplines)
+                            .ThenInclude(d => d.Discipline)
+                            .ToListAsync();
+
+            if (students == null)
+                return NotFound();
+
+            // Create columns in the data table
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("StudentName", typeof(string));
+            dataTable.Columns.Add("Discipline", typeof(string));
+            dataTable.Columns.Add("GradeAverage", typeof(string));
+            dataTable.Columns.Add("GeneralGrade", typeof(string));
+
+            foreach (var student in students)
+            {
+                foreach (var studentDiscipline in student.StudentDisciplines)
+                {
+                    var gradeAverage = studentDiscipline.GradeAverage;
+                    var generalGrade = student.GeneralGrade;
+
+                    dataTable.Rows.Add(student.Name, studentDiscipline.Discipline.Name, gradeAverage, generalGrade);
+                }
+            }
+
+            // Convert datatable to CSV
+            // String builder is used to modify strings without creating new objects + increased performance
+            var csvConvert = new StringBuilder();
+            foreach(DataColumn column in dataTable.Columns)
+                csvConvert.Append(column.ColumnName + ",");
+            // Append default line terminator
+            csvConvert.AppendLine();
+
+            foreach(DataRow row in dataTable.Rows)
+            {
+                foreach (var item in row.ItemArray)
+                    csvConvert.Append(item + ",");
+                csvConvert.AppendLine();
+            }
+
+            var csvContent = csvConvert.ToString();
+            var csvToBytes = Encoding.UTF8.GetBytes(csvContent);
+            // Make a random file name
+            var csvFileName = $"Grades_{DateTime.Now}.csv";
+            return File(csvToBytes, "text/csv", csvFileName);
+        }
     }
 }
