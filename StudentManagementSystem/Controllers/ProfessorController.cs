@@ -6,6 +6,7 @@ using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.ViewModels;
 using System.IO.Compression;
+using StudentManagementSystem.Exceptions;
 
 namespace StudentManagementSystem.Controllers
 {
@@ -19,8 +20,8 @@ namespace StudentManagementSystem.Controllers
         #endregion
 
         #region Constructor
-        public ProfessorController(UserManager<User> userManager, 
-                                   AppDatabaseContext context, 
+        public ProfessorController(UserManager<User> userManager,
+                                   AppDatabaseContext context,
                                    ILogger<ProfessorController> logger)
         {
             _userManager = userManager;
@@ -32,70 +33,109 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            // Return 404 not found if the user wasnt found
-            if (user == null)
-                return NotFound();
-            return View(user);
+            try
+            {
+                if (User == null)
+                {
+                    throw new ProfessorControllerException("User not found", 404);
+                }
+                var user = await _userManager.GetUserAsync(User);
+                return View(user);
+            }
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
+
         }
 
         [HttpGet]
         public async Task<IActionResult> ViewStudents()
         {
-            // Get all of the students from the database and put them in a list
-            var students = await _context.Students.ToListAsync();
+            try
+            {
+                // Get all of the students from the database and put them in a list
+                var students = await _context.Students.ToListAsync();
 
-            if (students == null)
-                return NotFound();
+                if (students == null)
+                {
+                    throw new ProfessorControllerException("Students not found", 404);
+                }
 
-            // Pass the student list to the view
-            return View(students);
+                // Pass the student list to the view
+                return View(students);
+            }
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
-
         [HttpGet]
         public async Task<IActionResult> ViewStudentHomeworks(string studentId)
         {
-            // Get the student the professor clicked on
-            var student = await _context.Students.FindAsync(studentId);
-            if (student == null)
-                return NotFound();
+            try
+            {
+                // Get the student the professor clicked on
+                var student = await _context.Students.FindAsync(studentId);
+                if (student == null)
+                {
+                    throw new ProfessorControllerException("Student not found", 404);
+                }
+                // Get the student's homeworks
+                var homeworks = await _context.Homeworks
+                    .Where(s => s.StudentId == studentId)
+                    .ToListAsync();
 
-            // Get the student's homeworks
-            var homeworks = await _context.Homeworks
-                .Where(s => s.StudentId == studentId)
-                .ToListAsync();
-
-            ViewBag.StudentName = student.Name;
-            return View(homeworks);
+                ViewBag.StudentName = student.Name;
+                return View(homeworks);
+            }
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
-
         [HttpGet]
         public async Task<IActionResult> Homeworks()
         {
             // TODO: Add some custom exceptions for when a user is not found
             // a professor is not found and homeworks are not found.
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return NotFound();
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    throw new ProfessorControllerException("User not found", 404);
+                }
 
 
-            // Try to find the professor
-            var professor = await _context.Professors
-                                  .Include(p => p.Discipline)
-                                  .FirstOrDefaultAsync(p => p.Id == user.Id);
-            if (professor == null)
-                return NotFound();
+                // Try to find the professor
+                var professor = await _context.Professors
+                                      .Include(p => p.Discipline)
+                                      .FirstOrDefaultAsync(p => p.Id == user.Id);
+                if (professor == null)
+                {
+                    throw new ProfessorControllerException("Professor not found", 404);
+                }
 
-            // Try to find all of the homeworks for the professors disciplines.
-            // Check if the homework is a template, I dont want to show the same 
-            // copy of a homework because there might be hundreds of the same
-            // homeworks for students.
-            var homeworks = await _context.Homeworks
-                                  .Where(h => h.DisciplineId == professor.DisciplineId && h.IsTemplate == true)
-                                  .ToListAsync();
+                // Try to find all of the homeworks for the professors disciplines.
+                // Check if the homework is a template, I dont want to show the same 
+                // copy of a homework because there might be hundreds of the same
+                // homeworks for students.
+                var homeworks = await _context.Homeworks
+                                      .Where(h => h.DisciplineId == professor.DisciplineId && h.IsTemplate == true)
+                                      .ToListAsync();
+                if (homeworks == null)
+                {
+                    throw new ProfessorControllerException("Homeworks not found", 404);
+                }
 
-            ViewBag.DisciplineName = professor.Discipline.Name;
-            return View(homeworks);
+                ViewBag.DisciplineName = professor.Discipline.Name;
+                return View(homeworks);
+            }
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
 
         [HttpGet]
@@ -148,7 +188,7 @@ namespace StudentManagementSystem.Controllers
                     _context.Homeworks.Add(homeworkTemplate);
                     await _context.SaveChangesAsync();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                     ModelState.AddModelError(string.Empty, "Nu a putut fi adaugat templateul pentru tema");
@@ -169,7 +209,7 @@ namespace StudentManagementSystem.Controllers
                     ModelState.AddModelError("", "A aparut o eroare, nu am putut creea tema.");
                     return View(model);
                 }
-                
+
                 return RedirectToAction(nameof(Homeworks));
             }
 
@@ -233,7 +273,7 @@ namespace StudentManagementSystem.Controllers
         public async Task<IActionResult> EditHomework(string homeworkId)
         {
             var homework = await _context.Homeworks.FindAsync(homeworkId);
-            if(homework == null)
+            if (homework == null)
                 return NotFound();
 
             var model = new HomeworkViewModel
@@ -277,7 +317,7 @@ namespace StudentManagementSystem.Controllers
                 _context.Update(updatedHomeworkTemplate);
 
                 // Update the homeworks for all of the students
-                foreach(var homework in studentHomeworks)
+                foreach (var homework in studentHomeworks)
                 {
                     homework.Title = model.Title;
                     homework.Description = model.Description;
@@ -341,7 +381,7 @@ namespace StudentManagementSystem.Controllers
             var projectFiles = await _context.ProjectFiles
                                     .Where(p => p.ProjectID == projectId)
                                     .ToListAsync();
-            if(projectFiles == null)
+            if (projectFiles == null)
                 return NotFound();
 
             // To read and write the byte array data of the file conten
@@ -350,11 +390,11 @@ namespace StudentManagementSystem.Controllers
                 // Use zip archive to download all of the project files for the professor
                 using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create))
                 {
-                    foreach(var file in projectFiles)
+                    foreach (var file in projectFiles)
                     {
                         // Create the zip archive with the name of the file
                         var zip = zipArchive.CreateEntry(file.FileName, CompressionLevel.Optimal);
-                        using(var zipStream = zip.Open())
+                        using (var zipStream = zip.Open())
                         {
                             await zipStream.WriteAsync(file.FileContent, 0, file.FileContent.Length);
                         }
@@ -364,7 +404,7 @@ namespace StudentManagementSystem.Controllers
                 var zipName = Path.GetTempFileName() + ".zip";
                 // Return the file with the specified MIME(indicates the type of a document)
                 // type of application/zip
-                return File(memoryStream.ToArray(),"applcation/zip", zipName);
+                return File(memoryStream.ToArray(), "applcation/zip", zipName);
             }
         }
     }
