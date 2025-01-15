@@ -18,7 +18,6 @@ else
                 <th>Nume</th>
                 <th>Email</th>
                 <th>Anul de studiu</th>
-                <th>Media la Student</th>
                 <th>Media generala</th>
             </tr>
         </thead>
@@ -46,7 +45,7 @@ else
                         <ul>
                             @foreach (var studentDiscipline in student.StudentDisciplines)
                             {
-                                <li>@studentDiscipline.Discipline.Name</li>
+                                @studentDiscipline.Discipline.Name
                             }
                         </ul>
                     </td>
@@ -54,7 +53,7 @@ else
                         <ul>
                             @foreach (var studentDiscipline in student.StudentDisciplines)
                             {
-                                <li>@studentDiscipline.GradeAverage</li>
+                                @studentDiscipline.GradeAverage
                             }
                         </ul>
                     </td>

@@ -431,6 +431,7 @@ namespace StudentManagementSystem.Controllers
                     Status = false,
                     Mandatory = model.Mandatory,
                     Penalty = model.Penalty,
+                    AfterEndDateUpload = model.AfterEndUploadDate,
                     DisciplineId = professor.DisciplineId,
                     IsTemplate = true
                 };
@@ -464,6 +465,7 @@ namespace StudentManagementSystem.Controllers
                         Grade = 0.00,
                         Status = false,
                         Mandatory = model.Mandatory,
+                        AfterEndDateUpload = model.AfterEndUploadDate,
                         Penalty = model.Penalty,
                         StudentId = student.Id,
                         IsTemplate = false
