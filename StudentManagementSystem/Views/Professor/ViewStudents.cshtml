@@ -18,6 +18,7 @@ else
                 <th>Nume</th>
                 <th>Email</th>
                 <th>Anul de studiu</th>
+                <th>Media la Student</th>
                 <th>Media generala</th>
             </tr>
         </thead>
@@ -33,6 +34,29 @@ else
                     <a asp-action="ViewStudentHomeworks" asp-route-studentId="@student.Id" class="btn btn-primary">
                         Vezi Temele 
                     </a>
+                    </td>
+                </tr>
+            }
+
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.UserName</td>
+                    <td>
+                        <ul>
+                            @foreach (var studentDiscipline in student.StudentDisciplines)
+                            {
+                                <li>@studentDiscipline.Discipline.Name</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            @foreach (var studentDiscipline in student.StudentDisciplines)
+                            {
+                                <li>@studentDiscipline.GradeAverage</li>
+                            }
+                        </ul>
                     </td>
                 </tr>
             }

@@ -29,6 +29,7 @@ namespace StudentManagementSystem.Controllers
         }
         #endregion
 
+        #region Index and ViewStudents Methods
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -41,16 +42,30 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewStudents()
         {
-            // Get all of the students from the database and put them in a list
-            var students = await _context.Students.ToListAsync();
+            // Get all of the students from the database and include the student disciplines and disciplines and put them in a list
+            var students = await _context.Students.
+                                   Include(s => s.StudentDisciplines).
+                                   ThenInclude(sd => sd.Discipline).
+                                   ToListAsync();
 
             if (students == null)
                 return NotFound();
 
+            // Calculate the grade average for each student based on the discipline grade formula
+            foreach (var student in students)
+            {
+                foreach (var studentDiscipline in student.StudentDisciplines)
+                {
+                    studentDiscipline.GradeAverage = CalculateGradeAverage(student, studentDiscipline.Discipline);
+                }
+            }
+
             // Pass the student list to the view
             return View(students);
         }
+        #endregion
 
+        #region Homework Methods
         [HttpGet]
         public async Task<IActionResult> ViewStudentHomeworks(string studentId)
         {
@@ -474,7 +489,9 @@ namespace StudentManagementSystem.Controllers
 
             return RedirectToAction(nameof(Homeworks));
         }
+        #endregion
 
+        #region Grade Methods
         [HttpGet]
         public async Task<IActionResult> GradeHomework(string homeworkId)
         {
@@ -508,10 +525,86 @@ namespace StudentManagementSystem.Controllers
 
             homework.Grade = model.Grade;
             homework.Comment = model.Comment;
+            homework.Status = true;
             _context.Update(homework);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(ViewStudentHomeworks), new { studentId = homework.StudentId });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GradeCalculationFormula(string disciplineId)
+        {
+            var discipline = await _context.Disciplines.FindAsync(disciplineId);
+            if (discipline == null)
+                return NotFound();
+
+            var model = new GradeCalculationFormulaViewModel
+            {
+                DisciplineID = discipline.Id,
+                Formula = discipline.GradeCalculationFormula
+            };
+
+            ViewBag.DisciplineName = discipline.Name;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GradeCalculationFormula(GradeCalculationFormulaViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var discipline = await _context.Disciplines.FindAsync(model.DisciplineID);
+            if (discipline == null)
+                return NotFound();
+
+            discipline.GradeCalculationFormula = model.Formula;
+            _context.Update(discipline);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public double CalculateGradeAverage(Student student, Discipline discipline)
+        {
+            // Get all of the homeworks that have a grade higher than 0(graded homeworks)
+            var homeworks = _context.Homeworks.Where(h => h.StudentId == student.Id
+                                                     && h.DisciplineId == discipline.Id
+                                                     && h.Grade.HasValue).
+                                                     ToList();
+            _logger.LogInformation($"Number of homeworks found: {homeworks.Count}");
+            _logger.LogInformation($"Number of homeworks found: {homeworks.Count}");
+            _logger.LogInformation($"Number of homeworks found: {homeworks.Count}");
+
+            if (homeworks == null)
+                return 0.00;
+
+            double gradeAverage = 0.00;
+            switch (discipline.GradeCalculationFormula)
+            {
+                case "MA1":
+                    gradeAverage = homeworks.Sum(h => h.Grade.Value) / homeworks.Count;
+                    break;
+
+                case "MA2":
+                    gradeAverage = homeworks.Sum(h => h.Grade.Value) / homeworks.Count;
+                    gradeAverage = Math.Ceiling(gradeAverage);
+                    break;
+
+                case "MA3":
+                    gradeAverage = homeworks.Sum(h => h.Grade.Value) / homeworks.Count;
+                    gradeAverage = Math.Floor(gradeAverage);
+                    break;
+
+                default:
+                    gradeAverage = homeworks.Sum(h => h.Grade.Value) / homeworks.Count;
+                    break;
+            }
+
+            return gradeAverage;
+        }
+        #endregion
     }
 }

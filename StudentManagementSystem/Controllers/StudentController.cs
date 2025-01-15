@@ -228,7 +228,6 @@ namespace StudentManagementSystem.Controllers
             {
                 double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00 - (double)quiz.Penalty;
                 quiz.Grade = grade;
-                quiz.Status = true;
                 _context.Update(quiz);
                 await _context.SaveChangesAsync();
             }
@@ -237,7 +236,6 @@ namespace StudentManagementSystem.Controllers
             {
                 double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00;
                 quiz.Grade = grade;
-                quiz.Status = true;
                 _context.Update(quiz);
                 await _context.SaveChangesAsync();
             }

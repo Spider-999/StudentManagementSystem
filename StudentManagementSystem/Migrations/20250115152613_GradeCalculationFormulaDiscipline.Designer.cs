@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagementSystem.Data;
 
@@ -11,9 +12,11 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250115152613_GradeCalculationFormulaDiscipline")]
+    partial class GradeCalculationFormulaDiscipline
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,19 +181,19 @@ namespace StudentManagementSystem.Migrations
                         new
                         {
                             Id = "1",
-                            GradeCalculationFormula = "MA1",
+                            GradeCalculationFormula = "MA",
                             Name = "Matematica"
                         },
                         new
                         {
                             Id = "2",
-                            GradeCalculationFormula = "MA1",
+                            GradeCalculationFormula = "MA",
                             Name = "Fizica"
                         },
                         new
                         {
                             Id = "3",
-                            GradeCalculationFormula = "MA1",
+                            GradeCalculationFormula = "MA",
                             Name = "Programare"
                         });
                 });
@@ -322,9 +325,6 @@ namespace StudentManagementSystem.Migrations
 
                     b.Property<string>("DisciplineId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<double?>("GradeAverage")
-                        .HasColumnType("float");
 
                     b.HasKey("StudentId", "DisciplineId");
 
