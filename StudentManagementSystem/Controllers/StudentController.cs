@@ -146,6 +146,9 @@ namespace StudentManagementSystem.Controllers
                     }
                 }
 
+                // Set the status to true because the project files have been uploaded
+                // and the project is now completed
+                project.Status = true;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Homework));
             }
@@ -206,15 +209,13 @@ namespace StudentManagementSystem.Controllers
             foreach(var question in model.Questions)
             {
                 var quizQuestion = quiz.QuizQuestions.FirstOrDefault(q => q.Question == question.Question);
-                _logger.LogInformation((quizQuestion.CorrectAnswer == question.SelectedAnswer).ToString());
-                _logger.LogInformation(quizQuestion.CorrectAnswer.ToString());
-                _logger.LogInformation(question.SelectedAnswer.ToString());
-                if (quizQuestion == null)
-                    continue;
 
-                _logger.LogInformation((quizQuestion.CorrectAnswer == question.SelectedAnswer).ToString());
-                _logger.LogInformation(quizQuestion.CorrectAnswer.ToString());
-                _logger.LogInformation(question.SelectedAnswer.ToString());
+                if (quizQuestion == null)
+                {
+                    _logger.LogWarning($"Question not found: {question.Question}");
+                    continue;
+                }
+
                 if (quizQuestion.CorrectAnswer == question.SelectedAnswer)
                 {
                     
@@ -222,12 +223,24 @@ namespace StudentManagementSystem.Controllers
                 }
             }
 
-            // Calculate the grade with one point base grade
-            double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00;
-            quiz.Grade = grade;
-            quiz.Status = true;
-            _context.Update(quiz);
-            await _context.SaveChangesAsync();
+            // If the homework was uploaded after the deadline substract the penalty from the final grade
+            if (quiz.AfterEndDateUpload == true && DateTime.Now >= quiz.EndDate)
+            {
+                double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00 - (double)quiz.Penalty;
+                quiz.Grade = grade;
+                quiz.Status = true;
+                _context.Update(quiz);
+                await _context.SaveChangesAsync();
+            }
+            // Otherwise dont give a penalty to the grade
+            else if(quiz.AfterEndDateUpload == false && DateTime.Now < quiz.EndDate)
+            {
+                double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00;
+                quiz.Grade = grade;
+                quiz.Status = true;
+                _context.Update(quiz);
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToAction(nameof(Homework));
         }

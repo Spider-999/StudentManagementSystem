@@ -28,8 +28,6 @@ else
                 <th>Descriere</th>
                 <th>Data creeari</th>
                 <th>Termen limita</th>
-                <th>Nota</th>
-                <th>Stare</th>
             </tr>
         </thead>
         <tbody>
@@ -40,24 +38,6 @@ else
                     <td>@homework.Description</td>
                     <td>@homework.CreationDate</td>
                     <td>@homework.EndDate</td>
-
-                    @if (homework.Grade == 0.00)
-                    {
-                        <td>Fara nota</td>
-                    }
-                    else
-                    {
-                        <td>@homework.Grade</td>
-                    }
-
-                    @if (homework.Status == false)
-                    {
-                        <td>Necompletata</td>
-                    }
-                    else
-                    {
-                        <td>Completata</td>
-                    }
 
                     <td>
                         <a class="btn btn-danger" asp-route-homeworkId="@homework.Id" asp-controller="Professor" asp-action="DeleteHomework">

@@ -52,25 +52,43 @@ else
                         <td>Completata</td>
                     }
 
-                    @if(homework is StudentManagementSystem.Models.Project)
+                    <!-- 
+                    The student should be able to complete the homework/quiz/project only
+                    if the current date passed the creation date and if the homework
+                    hasn't been completed yet
+                    -->
+                    @if (DateTime.Now >= homework.CreationDate)
                     {
-                        <td>
-                            <a asp-controller="Student" asp-action="UploadProjectFiles" asp-route-projectID="@homework.Id" class="btn btn-primary">Incarca proiectul</a>
-                        </td>
+                        <!-- 
+                        Can upload only if after end date upload is true or if 
+                        the current date is less than the end date
+                        -->
+                        @if(homework.AfterEndDateUpload == true || DateTime.Now < homework.EndDate)
+                        {
+                            @if(homework is StudentManagementSystem.Models.Project)
+                            {
+                                <td>
+                                    <a asp-controller="Student" asp-action="UploadProjectFiles" asp-route-projectID="@homework.Id" class="btn btn-primary">Incarca proiectul</a>
+                                </td>
+                            }
+                            else if (homework is StudentManagementSystem.Models.Quiz)
+                            {
+                                <!-- The student shouldnt be able to submit the quiz again -->
+                                if (homework.Status == false)
+                                {
+                                    <td>
+                                        <a class="btn btn-primary" asp-controller="Student" asp-action="CompleteQuiz" asp-route-id="@homework.Id">Incepe testul</a>
+                                    </td>
+                                }
+                            }
+                            else if(homework is StudentManagementSystem.Models.Homework)
+                            {
+                                <td>
+                                    <a class="btn btn-primary" asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">Acceseaza Tema</a>
+                                </td>
+                            }
+                        }
                     }
-                    else if (homework is StudentManagementSystem.Models.Quiz)
-                    {
-                        <td>
-                            <a class="btn btn-primary" asp-controller="Student" asp-action="CompleteQuiz" asp-route-id="@homework.Id">Incepe testul</a>
-                        </td>
-                    }
-                    else if(homework is StudentManagementSystem.Models.Homework)
-                    {
-                        <td>
-                            <a class="btn btn-primary" asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">Acceseaza Tema</a>
-                        </td>
-                    }
-                    
                 </tr>
             }
         </tbody>
