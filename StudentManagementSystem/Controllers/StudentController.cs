@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
+using StudentManagementSystem.Exceptions;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.ViewModels;
 
@@ -29,51 +30,77 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            // Return 404 not found if the user wasnt found
-            if (user == null)
-                return NotFound();
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
 
-            return View(user);
+                if (user == null)
+                {
+                    //Exception thrown if user is not found
+                    throw new StudentControllerException("User not found", 404);
+                }
+                return View(user);
+            }
+            catch (StudentControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Homework()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            try
             {
-                return Unauthorized();
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    //Exception thrown if user is null, meaning they have not authenticated
+                    throw new StudentControllerException("User not authorised", 401);
+                }
+                // Get all of the homeworks of this specific user
+                var homeworks = await _context.Homeworks.
+                    Where(s => s.StudentId == user.Id).
+                    ToListAsync();
+
+                return View(homeworks);
             }
 
-            // Get all of the homeworks of this specific user
-            var homeworks = await _context.Homeworks.
-                Where(s => s.StudentId == user.Id).
-                ToListAsync();
-
-            return View(homeworks);
+            catch (StudentControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> EditHomework(string id)
         {
-            var homework = await _context.Homeworks.FindAsync(id);
-            if (homework == null)
-                return NotFound();
-
-            var model = new HomeworkViewModel
+            try
             {
-                Id = homework.Id,
-                Title = homework.Title,
-                Content = homework.Content,
-                Description = homework.Description,
-                EndDate = homework.EndDate,
-                Mandatory = homework.Mandatory,
-                Penalty = homework.Penalty,
-                AfterEndUploadDate = homework.AfterEndDateUpload
-            };
+                var homework = await _context.Homeworks.FindAsync(id);
+                if (homework == null)
+                {
+                    //Exception thrown if homework is not found
+                    throw new StudentControllerException("Homework not found", 404);
+                }
 
-            return View(model);
+                var model = new HomeworkViewModel
+                {
+                    Id = homework.Id,
+                    Title = homework.Title,
+                    Content = homework.Content,
+                    Description = homework.Description,
+                    EndDate = homework.EndDate,
+                    Mandatory = homework.Mandatory,
+                    Penalty = homework.Penalty,
+                    AfterEndUploadDate = homework.AfterEndDateUpload
+                };
+                return View(model);
+            }
+            catch (StudentControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
 
         // TODO: Create a homework viewmodel for this
