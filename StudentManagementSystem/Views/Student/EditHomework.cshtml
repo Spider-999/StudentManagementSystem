@@ -17,15 +17,33 @@
         <label asp-for="Description"></label>
         <span>@Model.Description</span>
     </div>
+    @{
+        if(Model.Grade!=0){
+            <div class="form-group">
+                <label asp-for="Content"></label>
+                <textarea asp-for="Content"
+                rows="15"
+                cols="40" readonly>@Model.Content</textarea>
+            </div>
+        }
+        else{
+            <div class="form-group">
+                <label asp-for="Content"></label>
+                <textarea asp-for="Content"
+                rows="15"
+                cols="40">@Model.Content</textarea>
+            </div>
 
-    <div class="form-group">
-        <label asp-for="Content"></label>
-        <textarea asp-for="Content"
-                  rows="15"
-                  cols="40">@Model.Content</textarea>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Salveaza</button>
+        }
+    }
+        <div class="form-group">
+            <label asp-for="Comment"></label>
+            <code>@Model.Comment</code>
+        </div>
+    @if (Model.Grade == 0)
+    {
+        <button type="submit" class="btn btn-primary">Salveaza</button>
+    }
 </form>
 
 @section Scripts {
