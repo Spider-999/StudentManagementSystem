@@ -400,6 +400,12 @@ namespace StudentManagementSystem.Controllers
                 {
                     Title = model.Title,
                     Description = model.Description,
+                    CreationDate = DateTime.Now,
+                    EndDate = model.EndDate,
+                    Grade = 0.00,
+                    Status = false,
+                    Mandatory = false,
+                    Penalty = model.Penalty,
                     DisciplineId = professor.DisciplineId,
                     IsTemplate = true
                 };
@@ -428,7 +434,12 @@ namespace StudentManagementSystem.Controllers
                     {
                         Title = model.Title,
                         Description = model.Description,
-                        DisciplineId = professor.DisciplineId,
+                        CreationDate = DateTime.Now,
+                        EndDate = model.EndDate,
+                        Grade = 0.00,
+                        Status = false,
+                        Mandatory = false,
+                        Penalty = model.Penalty,
                         StudentId = student.Id,
                         IsTemplate = false
                     };

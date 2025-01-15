@@ -11,21 +11,21 @@ namespace StudentManagementSystem.ViewModels
         #endregion
 
         #region Getters & Setters
-        [Required]
+        [Required(ErrorMessage = "Intrebarile sunt necesare")]
         [Display(Name ="Intrebare")]
         public string Question
         {
             get => _question; 
             set => _question = value;
         }
-        [Required]
+        [Required(ErrorMessage ="Raspunsurile sunt necesare")]
         [Display(Name = "Raspunsuri")]
         public List<string> Answers
         {
             get => _answers;
             set => _answers = value;
         }
-        [Required]
+        [Required(ErrorMessage = "Raspunsul corect este necesar")]
         [Display(Name = "Raspuns corect")]
         public string CorrectAnswer
         {
