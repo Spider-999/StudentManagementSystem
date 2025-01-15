@@ -98,6 +98,7 @@ namespace StudentManagementSystem.Controllers
                     Content = homework.Content,
                     Description = homework.Description,
                     EndDate = homework.EndDate,
+                    Comment = homework.Comment,
                     Mandatory = homework.Mandatory,
                     Penalty = homework.Penalty,
                     AfterEndUploadDate = homework.AfterEndDateUpload
@@ -118,16 +119,17 @@ namespace StudentManagementSystem.Controllers
                 var updatedHomework = await _context.Homeworks.FindAsync(homework.Id);
                 if(updatedHomework == null)
                     return NotFound();
-
-                updatedHomework.Content = homework.Content;
-                _context.Update(updatedHomework);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateException)
-                {
-                    ModelState.AddModelError("", "A aparut o eroare, schimbarile nu au avut efect.");
+                if(homework.Grade == 0) { 
+                    updatedHomework.Content = homework.Content;
+                    _context.Update(updatedHomework);
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateException)
+                    {
+                        ModelState.AddModelError("", "A aparut o eroare, schimbarile nu au avut efect.");
+                    }
                 }
                 return RedirectToAction(nameof(Homework));
             }

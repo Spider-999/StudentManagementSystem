@@ -17,6 +17,7 @@ namespace StudentManagementSystem.ViewModels
         private double? _penalty;
         private bool? _afterEndDateUpload;
         private string? _homeworkType;
+        private string? _comment;
         #endregion
 
         #region Getters & setters
@@ -100,6 +101,12 @@ namespace StudentManagementSystem.ViewModels
         {
             get => _homeworkType;
             set => _homeworkType = value;
+        }
+
+        public string? Comment
+        {
+            get => _comment;
+            set => _comment= value;
         }
         #endregion
     }
