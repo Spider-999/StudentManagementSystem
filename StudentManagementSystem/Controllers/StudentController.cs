@@ -14,13 +14,15 @@ namespace StudentManagementSystem.Controllers
         #region Private properties
         private UserManager<User> _userManager;
         private AppDatabaseContext _context;
+        private readonly ILogger<ProfessorController> _logger;
         #endregion
 
         #region Constructor
-        public StudentController(UserManager<User> userManager, AppDatabaseContext context)
+        public StudentController(UserManager<User> userManager, AppDatabaseContext context, ILogger<ProfessorController> logger)
         {
             _userManager = userManager;
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -149,6 +151,85 @@ namespace StudentManagementSystem.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CompleteQuiz(string id)
+        {
+            var quiz = await _context.Quizzes
+                              .Include(q => q.QuizQuestions)
+                              .FirstOrDefaultAsync(q => q.Id ==  id);
+
+            if (quiz == null)
+                return NotFound();
+
+            var model = new CompleteQuizViewModel
+            {
+                QuizID = quiz.Id,
+                Title = quiz.Title,
+                Questions = quiz.QuizQuestions.Select(q => new CompleteQuizQuestionViewModel
+                {
+                    Question = q.Question,
+                    Answers = q.Answers,
+                    SelectedAnswer = null
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompleteQuiz(CompleteQuizViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Log validation errors
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        _logger.LogError($"Validation error in {state.Key}: {error.ErrorMessage}");
+                    }
+                }
+                return View(model);
+            }
+
+            var quiz = await _context.Quizzes
+                             .Include(q => q.QuizQuestions)
+                             .FirstOrDefaultAsync(q => q.Id == model.QuizID);
+
+            if (quiz == null)
+                return NotFound();
+
+            // Get the correct answers
+            int correctAnswers = 0;
+            foreach(var question in model.Questions)
+            {
+                var quizQuestion = quiz.QuizQuestions.FirstOrDefault(q => q.Question == question.Question);
+                _logger.LogInformation((quizQuestion.CorrectAnswer == question.SelectedAnswer).ToString());
+                _logger.LogInformation(quizQuestion.CorrectAnswer.ToString());
+                _logger.LogInformation(question.SelectedAnswer.ToString());
+                if (quizQuestion == null)
+                    continue;
+
+                _logger.LogInformation((quizQuestion.CorrectAnswer == question.SelectedAnswer).ToString());
+                _logger.LogInformation(quizQuestion.CorrectAnswer.ToString());
+                _logger.LogInformation(question.SelectedAnswer.ToString());
+                if (quizQuestion.CorrectAnswer == question.SelectedAnswer)
+                {
+                    
+                    correctAnswers++;
+                }
+            }
+
+            // Calculate the grade with one point base grade
+            double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00;
+            quiz.Grade = grade;
+            quiz.Status = true;
+            _context.Update(quiz);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Homework));
         }
     }
 }

@@ -376,7 +376,17 @@ namespace StudentManagementSystem.Controllers
         public async Task<IActionResult> CreateQuiz(CreateQuizViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                // Log validation errors
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        _logger.LogError($"Validation error in {state.Key}: {error.ErrorMessage}");
+                    }
+                }
                 return View(model);
+            }
             
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
@@ -396,7 +406,7 @@ namespace StudentManagementSystem.Controllers
                     return NotFound();
 
                 // Add template quiz homework for the professor view
-                var templateQuiz = new Quiz
+                Quiz templateQuiz = new Quiz
                 {
                     Title = model.Title,
                     Description = model.Description,
@@ -404,7 +414,7 @@ namespace StudentManagementSystem.Controllers
                     EndDate = model.EndDate,
                     Grade = 0.00,
                     Status = false,
-                    Mandatory = false,
+                    Mandatory = model.Mandatory,
                     Penalty = model.Penalty,
                     DisciplineId = professor.DisciplineId,
                     IsTemplate = true
@@ -430,7 +440,7 @@ namespace StudentManagementSystem.Controllers
                 foreach(var student in students)
                 {
                     // Create a quiz for the student
-                    var quiz = new Quiz
+                    Quiz quiz = new Quiz
                     {
                         Title = model.Title,
                         Description = model.Description,
@@ -438,7 +448,7 @@ namespace StudentManagementSystem.Controllers
                         EndDate = model.EndDate,
                         Grade = 0.00,
                         Status = false,
-                        Mandatory = false,
+                        Mandatory = model.Mandatory,
                         Penalty = model.Penalty,
                         StudentId = student.Id,
                         IsTemplate = false
@@ -449,7 +459,7 @@ namespace StudentManagementSystem.Controllers
                     // Add quiz questions
                     foreach(var questionModel in model.Questions)
                     {
-                        var question = new QuizQuestion
+                        QuizQuestion question = new QuizQuestion
                         {
                             Question = questionModel.Question,
                             Answers = questionModel.Answers,

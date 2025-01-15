@@ -55,21 +55,22 @@ else
                     @if(homework is StudentManagementSystem.Models.Project)
                     {
                         <td>
-                        <a asp-controller="Student" asp-action="UploadProjectFiles" asp-route-projectID="@homework.Id" class="btn btn-primary">Incarca proiectul</a>
+                            <a asp-controller="Student" asp-action="UploadProjectFiles" asp-route-projectID="@homework.Id" class="btn btn-primary">Incarca proiectul</a>
+                        </td>
+                    }
+                    else if (homework is StudentManagementSystem.Models.Quiz)
+                    {
+                        <td>
+                            <a class="btn btn-primary" asp-controller="Student" asp-action="CompleteQuiz" asp-route-id="@homework.Id">Incepe testul</a>
                         </td>
                     }
                     else if(homework is StudentManagementSystem.Models.Homework)
                     {
                         <td>
-                        <a class="btn btn-primary" asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">Acceseaza Tema</a>
+                            <a class="btn btn-primary" asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">Acceseaza Tema</a>
                         </td>
                     }
-                    else
-                    {
-                        <td>
-                            <a class="btn btn-primary" asp-controller="Student" asp-action="StartQuiz" asp-route-id="@homework.Id">Acceseaza Tema</a>
-                        </td>
-                    }
+                    
                 </tr>
             }
         </tbody>

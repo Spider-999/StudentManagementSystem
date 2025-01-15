@@ -8,14 +8,13 @@ namespace StudentManagementSystem.ViewModels
         #region Private properties
         private string _title;
         private string _description;
-        private DateTime? _creationDate;
-        private DateTime? _endDate;
-        private double? _grade;
-        private bool? _status;
-        private bool? _mandatory;
-        private double? _penalty;
-        private bool? _afterEndDateUpload;
-        private string? _homeworkType;
+        private DateTime _creationDate;
+        private DateTime _endDate;
+        private double _grade;
+        private bool _status;
+        private bool _mandatory;
+        private double _penalty;
+        private bool _afterEndDateUpload;
         public List<CreateQuizQuestionViewModel> _questions;
         #endregion
 
@@ -50,59 +49,52 @@ namespace StudentManagementSystem.ViewModels
         }
 
         [Display(Name = "Data creeari")]
-        public DateTime? CreationDate
+        public DateTime CreationDate
         {
             get => _creationDate;
             set => _creationDate = value;
         }
         [Required(ErrorMessage = "Termenul limita este necesar")]
         [Display(Name = "Termenul limita")]
-        public DateTime? EndDate
+        public DateTime EndDate
         {
             get => _endDate;
             set => _endDate = value;
         }
 
         [Display(Name = "Nota")]
-        public double? Grade
+        public double Grade
         {
             get => _grade;
             set => _grade = value;
         }
         [Required(ErrorMessage = "Starea este necesara")]
         [Display(Name = "Stare")]
-        public bool? Status
+        public bool Status
         {
             get => _status;
             set => _status = value;
         }
         [Required(ErrorMessage = "Setarea optiunii este necesara")]
         [Display(Name = "Test obligatoriu")]
-        public bool? Mandatory
+        public bool Mandatory
         {
             get => _mandatory;
             set => _mandatory = value;
         }
         [Required(ErrorMessage = "Setarea penalizarii este necesara")]
         [Display(Name = "Penalizare pentru intarzierea upload-ului")]
-        public double? Penalty
+        public double Penalty
         {
             get => _penalty;
             set => _penalty = value;
         }
         [Required(ErrorMessage = "Setarea optiunii este necesara")]
         [Display(Name = "Poate fi uploadata tema dupa termenul limita?")]
-        public bool? AfterEndUploadDate
+        public bool AfterEndUploadDate
         {
             get => _afterEndDateUpload;
             set => _afterEndDateUpload = value;
-        }
-
-        [Display(Name = "Tipul temei")]
-        public string? HomeworkType
-        {
-            get => _homeworkType;
-            set => _homeworkType = value;
         }
         #endregion
     }
