@@ -242,5 +242,35 @@ namespace StudentManagementSystem.Controllers
 
             return RedirectToAction(nameof(Homework));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewGrades()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return NotFound();
+
+            // Get the student disciplines for this student if they re an user
+            var student = await _context.Students
+                                 .Include(sd => sd.StudentDisciplines)
+                                 .ThenInclude(d => d.Discipline)
+                                 .FirstOrDefaultAsync(s => s.Id == user.Id);
+            if(student == null)
+                return NotFound();
+
+            var studentGradesViewModel = new StudentGradesViewModel
+            {
+                StudentName = student.Name,
+                Disciplines = student.StudentDisciplines.Select(sd => new DisciplineGradeViewModel
+                {
+                    DisciplineName = sd.Discipline.Name,
+                    GradeAverage = sd.GradeAverage,
+                    GeneralGrade = student.GeneralGrade
+                }).ToList()
+            };
+
+            return View(studentGradesViewModel);
+
+        }
     }
 }

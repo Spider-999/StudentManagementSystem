@@ -49,7 +49,7 @@ namespace StudentManagementSystem.Controllers
                                    ToListAsync();
 
             if (students == null)
-                return NotFound();
+                return RedirectToAction("Index");
 
             // Calculate the grade average for each student based on the discipline grade formula
             foreach (var student in students)
@@ -62,6 +62,8 @@ namespace StudentManagementSystem.Controllers
                 student.GeneralGrade = CalculateGeneralGrade(student);
                 _logger.LogInformation($"Updated general grade for {student.Name}: {student.GeneralGrade}");
             }
+
+            await _context.SaveChangesAsync();
 
             // Pass the student list to the view
             return View(students);
@@ -604,7 +606,11 @@ namespace StudentManagementSystem.Controllers
                     gradeAverage = homeworks.Sum(h => h.Grade.Value) / homeworks.Count;
                     break;
             }
-            
+
+            // Repalce NaN values with 0.00 to be able to save to database
+            if (double.IsNaN(gradeAverage))
+                gradeAverage = 0.00;
+
             return Math.Round(gradeAverage, 2);
         }
 
@@ -623,6 +629,11 @@ namespace StudentManagementSystem.Controllers
                     generalGrade += studentDiscipline.GradeAverage.Value;
                 }
             }
+
+            // Repalce NaN values with 0.00 to be able to save to database
+            if (double.IsNaN(generalGrade))
+                generalGrade = 0.00;
+
             // The final grade is just the average of all of the discipline average grades
             // divided by the number of student disciplines. And I also rounded it to 2 point precision.
             return Math.Round(generalGrade / studentDisciplines.Count, 2);
