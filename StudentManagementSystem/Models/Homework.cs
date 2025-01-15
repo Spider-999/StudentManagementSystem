@@ -19,6 +19,7 @@ namespace StudentManagementSystem.Models
         private bool? _mandatory;
         private double? _penalty;
         private bool? _afterEndDateUpload;
+        private bool? _hasGrade;
         private bool? _isTemplate;
         #endregion
 
@@ -80,6 +81,12 @@ namespace StudentManagementSystem.Models
         {
             get => _content;
             set => _content = value;
+        }
+
+        public bool? HasGrade
+        {
+            get => _hasGrade;
+            set => _hasGrade=value;
         }
 
         public bool? IsTemplate

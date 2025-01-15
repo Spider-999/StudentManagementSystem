@@ -16,6 +16,7 @@ namespace StudentManagementSystem.ViewModels
         private bool? _mandatory;
         private double? _penalty;
         private bool? _afterEndDateUpload;
+        private bool? _hasGrade;
         private string? _homeworkType;
         #endregion
 
@@ -93,6 +94,13 @@ namespace StudentManagementSystem.ViewModels
         {
             get => _afterEndDateUpload;
             set => _afterEndDateUpload = value;
+        }
+
+        [Display(Name = "Nota")]
+        public bool? HasGrade
+        {
+            get => _hasGrade;
+            set => _hasGrade = value;
         }
 
         [Display(Name ="Tipul temei")]

@@ -140,6 +140,7 @@ namespace StudentManagementSystem.Controllers
                         CreationDate = DateTime.Now,
                         EndDate = model.EndDate,
                         Mandatory = model.Mandatory,
+                        HasGrade = model.HasGrade,
                         Penalty = model.Penalty,
                         AfterEndDateUpload = model.AfterEndUploadDate,
                         DisciplineId = professor.DisciplineId,
@@ -193,6 +194,7 @@ namespace StudentManagementSystem.Controllers
                             Status = false,
                             CreationDate = DateTime.Now,
                             EndDate = model.EndDate,
+                            HasGrade = model.HasGrade,
                             Mandatory = model.Mandatory,
                             Penalty = model.Penalty,
                             AfterEndDateUpload = model.AfterEndUploadDate,
@@ -217,6 +219,7 @@ namespace StudentManagementSystem.Controllers
                             EndDate = model.EndDate,
                             Mandatory = model.Mandatory,
                             Penalty = model.Penalty,
+                            HasGrade = model.HasGrade,
                             AfterEndDateUpload = model.AfterEndUploadDate,
                             DisciplineId = professor.DisciplineId,
                             StudentId = student.Id,
@@ -244,6 +247,7 @@ namespace StudentManagementSystem.Controllers
                 EndDate = homework.EndDate,
                 Mandatory = homework.Mandatory,
                 Penalty = homework.Penalty,
+                HasGrade = homework.HasGrade,
                 AfterEndUploadDate = homework.AfterEndDateUpload
             };
 
@@ -272,6 +276,7 @@ namespace StudentManagementSystem.Controllers
                 updatedHomeworkTemplate.Description = model.Description;
                 updatedHomeworkTemplate.EndDate = model.EndDate;
                 updatedHomeworkTemplate.Mandatory = model.Mandatory;
+                updatedHomeworkTemplate.HasGrade = model.HasGrade;
                 updatedHomeworkTemplate.Penalty = model.Penalty;
                 updatedHomeworkTemplate.AfterEndDateUpload = model.AfterEndUploadDate;
                 _context.Update(updatedHomeworkTemplate);
@@ -284,6 +289,7 @@ namespace StudentManagementSystem.Controllers
                     homework.EndDate = model.EndDate;
                     homework.Mandatory = model.Mandatory;
                     homework.Penalty = model.Penalty;
+                    homework.HasGrade = model.HasGrade;
                     homework.AfterEndDateUpload = model.AfterEndUploadDate;
                 }
 

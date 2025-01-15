@@ -1,0 +1,40 @@
+﻿@model List<StudentManagementSystem.Models.Student>
+
+@{
+    ViewData["Title"] = "Student Inscrisi";
+}
+
+<h3>Toti studentii inscrisi</h3>
+
+@if (!Model.Any())
+{
+    <p>Nu exista niciun student</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Nume</th>
+                <th>Email</th>
+                <th>Anul de studiu</th>
+                <th>Media generala</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="ViewStudentHomeworks" asp-route-studentId="@student.Id">
+                            @student.Name
+                        </a>
+                    </td>
+                    <td>@student.Email</td>
+                    <td>@student.YearOfStudy</td>
+                    <td>@student.GeneralGrade</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -32,13 +32,13 @@ else
                     <td>@homework.CreationDate</td>
                     <td>@homework.EndDate</td>
 
-                    @if (homework.Grade == 0.00)
+                    @if (homework.HasGrade == false)
                     {
                         <td>Fara nota</td>
                     }
                     else
                     {
-                        <td>@homework.Grade</td>
+                        <td>@homework.Grade / 10.00</td>
                     }
 
                     @if (homework.Status == false)

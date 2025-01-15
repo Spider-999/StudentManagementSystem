@@ -55,13 +55,22 @@
     </div>
 
     <div class="form-group">
+        <label asp-for="HasGrade"></label>
+        <select asp-for="HasGrade" class="form-control">
+            <option value="false">Nu</option>
+            <option value="true">Da</option>
+        </select>
+        <span asp-validation-for="HasGrade" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
         <label asp-for="HomeworkType"></label>
         <select asp-for="HomeworkType" class="form-control">
-            <option value="Assignment">Tema Scrisa</option>
+            <option value="Assignment">Tema </option>
             <option value="Project">Proiect</option>
             <option value="Quiz">Test</option>
         </select>
-        <span asp-validation-for="AfterEndUploadDate" class="text-danger"></span>
+        <span asp-validation-for="HomeworkType" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Creeaza</button>
 </form>

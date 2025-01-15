@@ -8,15 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentManagementSystem.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112210739_Cloned repo, changed migrations.cs
-    public partial class Clonedrepochangedmigrations : Migration
-========
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
     public partial class Initial : Migration
-========
-    public partial class DatabaseReset : Migration
->>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
->>>>>>>> master:StudentManagementSystem/Migrations/20250112204702_Initial.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -200,15 +192,7 @@ namespace StudentManagementSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112210739_Cloned repo, changed migrations.cs
                 name: "Professors",
-========
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
-                name: "Professor",
-========
-                name: "Professors",
->>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
->>>>>>>> master:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -247,20 +231,11 @@ namespace StudentManagementSystem.Migrations
                     Penalty = table.Column<double>(type: "float", nullable: true),
                     AfterEndDateUpload = table.Column<bool>(type: "bit", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112210739_Cloned repo, changed migrations.cs
-                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-========
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
-                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-========
+                    HasGrade = table.Column<bool>(type: "bit", nullable: true),
                     IsTemplate = table.Column<bool>(type: "bit", nullable: true),
                     DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     HomeworkType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false)
->>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
->>>>>>>> master:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                 },
                 constraints: table =>
                 {
@@ -300,42 +275,36 @@ namespace StudentManagementSystem.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112210739_Cloned repo, changed migrations.cs
-========
 
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
-========
             migrationBuilder.CreateTable(
-                name: "ProjectFile",
+                name: "ProjectFiles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HomeworkID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    FileContent = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ProjectID = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectFile", x => x.Id);
+                    table.PrimaryKey("PK_ProjectFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProjectFile_Homeworks_HomeworkID",
-                        column: x => x.HomeworkID,
+                        name: "FK_ProjectFiles_Homeworks_ProjectID",
+                        column: x => x.ProjectID,
                         principalTable: "Homeworks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
->>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
             migrationBuilder.InsertData(
                 table: "Disciplines",
                 columns: new[] { "Id", "GradeAverage", "Name" },
                 values: new object[,]
                 {
-                    { "1", null, "Mathematics" },
-                    { "2", null, "Physics" },
-                    { "3", null, "ComputerScience" }
+                    { "1", null, "Matematica" },
+                    { "2", null, "Fizica" },
+                    { "3", null, "Programare" }
                 });
->>>>>>>> master:StudentManagementSystem/Migrations/20250112204702_Initial.cs
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -387,32 +356,16 @@ namespace StudentManagementSystem.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112210739_Cloned repo, changed migrations.cs
-========
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
-                name: "IX_Professor_DisciplineId",
-                table: "Professor",
-========
->>>>>>>> master:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                 name: "IX_Professors_DisciplineId",
                 table: "Professors",
                 column: "DisciplineId");
 
             migrationBuilder.CreateIndex(
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112210739_Cloned repo, changed migrations.cs
-========
-                name: "IX_ProjectFile_HomeworkID",
-                table: "ProjectFile",
-                column: "HomeworkID");
+                name: "IX_ProjectFiles_ProjectID",
+                table: "ProjectFiles",
+                column: "ProjectID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentDisciplines_DisciplineId",
-                table: "StudentDisciplines",
->>>>>>>> Hary:StudentManagementSystem/Migrations/20250113143440_DatabaseReset.cs
-                column: "DisciplineId");
-
-            migrationBuilder.CreateIndex(
->>>>>>>> master:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                 name: "IX_StudentDisciplines_DisciplineId",
                 table: "StudentDisciplines",
                 column: "DisciplineId");
@@ -440,11 +393,7 @@ namespace StudentManagementSystem.Migrations
                 name: "Professors");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112210739_Cloned repo, changed migrations.cs
-                name: "Professors");
-========
-                name: "ProjectFile");
->>>>>>>> master:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+                name: "ProjectFiles");
 
             migrationBuilder.DropTable(
                 name: "StudentDisciplines");

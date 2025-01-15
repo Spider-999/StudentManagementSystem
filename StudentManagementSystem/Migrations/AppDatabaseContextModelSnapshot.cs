@@ -175,17 +175,17 @@ namespace StudentManagementSystem.Migrations
                         new
                         {
                             Id = "1",
-                            Name = "Mathematics"
+                            Name = "Matematica"
                         },
                         new
                         {
                             Id = "2",
-                            Name = "Physics"
+                            Name = "Fizica"
                         },
                         new
                         {
                             Id = "3",
-                            Name = "ComputerScience"
+                            Name = "Programare"
                         });
                 });
 
@@ -215,6 +215,9 @@ namespace StudentManagementSystem.Migrations
 
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
+
+                    b.Property<bool?>("HasGrade")
+                        .HasColumnType("bit");
 
                     b.Property<string>("HomeworkType")
                         .IsRequired()
@@ -258,23 +261,23 @@ namespace StudentManagementSystem.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<byte[]>("FileContent")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HomeworkID")
+                    b.Property<string>("ProjectID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HomeworkID");
+                    b.HasIndex("ProjectID");
 
-                    b.ToTable("ProjectFile");
+                    b.ToTable("ProjectFiles");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
@@ -468,13 +471,13 @@ namespace StudentManagementSystem.Migrations
 
             modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
                 {
-                    b.HasOne("StudentManagementSystem.Models.Project", "Homework")
+                    b.HasOne("StudentManagementSystem.Models.Project", "Project")
                         .WithMany("ProjectFiles")
-                        .HasForeignKey("HomeworkID")
+                        .HasForeignKey("ProjectID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Homework");
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
