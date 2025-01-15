@@ -57,7 +57,10 @@ namespace StudentManagementSystem.Controllers
                 foreach (var studentDiscipline in student.StudentDisciplines)
                 {
                     studentDiscipline.GradeAverage = CalculateGradeAverage(student, studentDiscipline.Discipline);
+                    _logger.LogInformation($"Updated grade average for {student.Name} in {studentDiscipline.Discipline.Name}: {studentDiscipline.GradeAverage}");
                 }
+                student.GeneralGrade = CalculateGeneralGrade(student);
+                _logger.LogInformation($"Updated general grade for {student.Name}: {student.GeneralGrade}");
             }
 
             // Pass the student list to the view
@@ -576,9 +579,6 @@ namespace StudentManagementSystem.Controllers
                                                      && h.DisciplineId == discipline.Id
                                                      && h.Grade.HasValue).
                                                      ToList();
-            _logger.LogInformation($"Number of homeworks found: {homeworks.Count}");
-            _logger.LogInformation($"Number of homeworks found: {homeworks.Count}");
-            _logger.LogInformation($"Number of homeworks found: {homeworks.Count}");
 
             if (homeworks == null)
                 return 0.00;
@@ -604,8 +604,28 @@ namespace StudentManagementSystem.Controllers
                     gradeAverage = homeworks.Sum(h => h.Grade.Value) / homeworks.Count;
                     break;
             }
+            
+            return Math.Round(gradeAverage, 2);
+        }
 
-            return gradeAverage;
+        public double CalculateGeneralGrade(Student student)
+        {
+            var studentDisciplines = student.StudentDisciplines;
+
+            if (studentDisciplines.Count == 0)
+                return 0.00;
+
+            double generalGrade = 0.00;
+            foreach (var studentDiscipline in studentDisciplines)
+            {
+                if (studentDiscipline.GradeAverage.HasValue && studentDiscipline.GradeAverage.Value > 0)
+                {
+                    generalGrade += studentDiscipline.GradeAverage.Value;
+                }
+            }
+            // The final grade is just the average of all of the discipline average grades
+            // divided by the number of student disciplines. And I also rounded it to 2 point precision.
+            return Math.Round(generalGrade / studentDisciplines.Count, 2);
         }
         #endregion
     }
