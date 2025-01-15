@@ -6,6 +6,7 @@
         private string _quizID;
         private string _title;
         private List<CompleteQuizQuestionViewModel> _questions;
+        private int _timeLimit;
         #endregion
 
         #region Constructor
@@ -32,6 +33,12 @@
         {
             get => _questions;
             set => _questions = value;
+        }
+
+        public int TimeLimit
+        {
+            get => _timeLimit;
+            set => _timeLimit = value;
         }
         #endregion
     }

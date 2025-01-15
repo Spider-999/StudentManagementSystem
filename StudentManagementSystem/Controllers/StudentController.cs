@@ -103,7 +103,6 @@ namespace StudentManagementSystem.Controllers
             }
         }
 
-        // TODO: Create a homework viewmodel for this
         [HttpPost]
         public async Task<IActionResult> EditHomework(HomeworkViewModel homework)
         {
@@ -197,6 +196,7 @@ namespace StudentManagementSystem.Controllers
             {
                 QuizID = quiz.Id,
                 Title = quiz.Title,
+                TimeLimit = quiz.TimeLimit, 
                 Questions = quiz.QuizQuestions.Select(q => new CompleteQuizQuestionViewModel
                 {
                     Question = q.Question,

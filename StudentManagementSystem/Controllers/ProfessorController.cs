@@ -443,6 +443,7 @@ namespace StudentManagementSystem.Controllers
                     Penalty = model.Penalty,
                     AfterEndDateUpload = model.AfterEndUploadDate,
                     DisciplineId = professor.DisciplineId,
+                    TimeLimit = model.TimeLimit,
                     IsTemplate = true
                 };
                 _context.Quizzes.Add(templateQuiz);
@@ -478,6 +479,7 @@ namespace StudentManagementSystem.Controllers
                         AfterEndDateUpload = model.AfterEndUploadDate,
                         Penalty = model.Penalty,
                         StudentId = student.Id,
+                        TimeLimit = model.TimeLimit,
                         IsTemplate = false
                     };
                     _context.Quizzes.Add(quiz);

@@ -15,6 +15,7 @@ namespace StudentManagementSystem.ViewModels
         private bool _mandatory;
         private double _penalty;
         private bool _afterEndDateUpload;
+        private int _timeLimit;
         public List<CreateQuizQuestionViewModel> _questions;
         #endregion
 
@@ -96,6 +97,14 @@ namespace StudentManagementSystem.ViewModels
         {
             get => _afterEndDateUpload;
             set => _afterEndDateUpload = value;
+        }
+
+        [Required(ErrorMessage ="Setarea timpului limita este necesara")]
+        [Display(Name ="Timpul limita in minute")]
+        public int TimeLimit
+        {
+            get => _timeLimit;
+            set => _timeLimit = value;
         }
         #endregion
     }
