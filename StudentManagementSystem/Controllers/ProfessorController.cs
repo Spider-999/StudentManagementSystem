@@ -8,6 +8,8 @@ using StudentManagementSystem.ViewModels;
 using System.Data;
 using System.IO.Compression;
 using System.Text;
+using StudentManagementSystem.Exceptions;
+
 
 namespace StudentManagementSystem.Controllers
 {
@@ -34,41 +36,54 @@ namespace StudentManagementSystem.Controllers
         #region Index and ViewStudents Methods
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            // Return 404 not found if the user wasnt found
-            if (user == null)
-                return NotFound();
-            return View(user);
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                // Return 404 not found if the user wasnt found
+                if (user == null)
+                    throw new ProfessorControllerException("User not found", 404);
+                return View(user);
+            }
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
-
         [HttpGet]
         public async Task<IActionResult> ViewStudents()
         {
-            // Get all of the students from the database and include the student disciplines and disciplines and put them in a list
-            var students = await _context.Students.
-                                   Include(s => s.StudentDisciplines).
-                                   ThenInclude(sd => sd.Discipline).
-                                   ToListAsync();
-
-            if (students == null)
-                return RedirectToAction("Index");
-
-            // Calculate the grade average for each student based on the discipline grade formula
-            foreach (var student in students)
+            try
             {
-                foreach (var studentDiscipline in student.StudentDisciplines)
+                // Get all of the students from the database and include the student disciplines and disciplines and put them in a list
+                var students = await _context.Students.
+                                       Include(s => s.StudentDisciplines).
+                                       ThenInclude(sd => sd.Discipline).
+                                       ToListAsync();
+
+                if (students == null)
+                    throw new ProfessorControllerException("Students not found", 404);
+
+                // Calculate the grade average for each student based on the discipline grade formula
+                foreach (var student in students)
                 {
-                    studentDiscipline.GradeAverage = CalculateGradeAverage(student, studentDiscipline.Discipline);
-                    _logger.LogInformation($"Updated grade average for {student.Name} in {studentDiscipline.Discipline.Name}: {studentDiscipline.GradeAverage}");
+                    foreach (var studentDiscipline in student.StudentDisciplines)
+                    {
+                        studentDiscipline.GradeAverage = CalculateGradeAverage(student, studentDiscipline.Discipline);
+                        _logger.LogInformation($"Updated grade average for {student.Name} in {studentDiscipline.Discipline.Name}: {studentDiscipline.GradeAverage}");
+                    }
+                    student.GeneralGrade = CalculateGeneralGrade(student);
+                    _logger.LogInformation($"Updated general grade for {student.Name}: {student.GeneralGrade}");
                 }
-                student.GeneralGrade = CalculateGeneralGrade(student);
-                _logger.LogInformation($"Updated general grade for {student.Name}: {student.GeneralGrade}");
+
+                await _context.SaveChangesAsync();
+
+                // Pass the student list to the view
+                return View(students);
             }
-
-            await _context.SaveChangesAsync();
-
-            // Pass the student list to the view
-            return View(students);
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
         #endregion
 
@@ -93,32 +108,38 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Homeworks()
         {
-            // TODO: Add some custom exceptions for when a user is not found
-            // a professor is not found and homeworks are not found.
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return NotFound();
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                    throw new ProfessorControllerException("User not found", 404);
 
 
-            // Try to find the professor
-            var professor = await _context.Professors
-                                  .Include(p => p.Discipline)
-                                  .FirstOrDefaultAsync(p => p.Id == user.Id);
-            if (professor == null)
-                return NotFound();
+                // Try to find the professor
+                var professor = await _context.Professors
+                                      .Include(p => p.Discipline)
+                                      .FirstOrDefaultAsync(p => p.Id == user.Id);
+                if (professor == null)
+                    throw new ProfessorControllerException("Professor not found", 404);
 
-            // Try to find all of the homeworks for the professors disciplines.
-            // Check if the homework is a template, I dont want to show the same 
-            // copy of a homework because there might be hundreds of the same
-            // homeworks for students.
-            var homeworks = await _context.Homeworks
-                                  .Where(h => h.DisciplineId == professor.DisciplineId && h.IsTemplate == true)
-                                  .ToListAsync();
+                // Try to find all of the homeworks for the professors disciplines.
+                // Check if the homework is a template, I dont want to show the same 
+                // copy of a homework because there might be hundreds of the same
+                // homeworks for students.
+                var homeworks = await _context.Homeworks
+                                      .Where(h => h.DisciplineId == professor.DisciplineId && h.IsTemplate == true)
+                                      .ToListAsync();
+                if (homeworks == null)
+                    throw new ProfessorControllerException("Homeworks not found", 404);
 
-            ViewBag.DisciplineName = professor.Discipline.Name;
-            return View(homeworks);
+                ViewBag.DisciplineName = professor.Discipline.Name;
+                return View(homeworks);
+            }
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
-
         [HttpGet]
         public IActionResult CreateHomework()
         {
@@ -253,23 +274,29 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> EditHomework(string homeworkId)
         {
-            var homework = await _context.Homeworks.FindAsync(homeworkId);
-            if(homework == null)
-                return NotFound();
+            try {
+                var homework = await _context.Homeworks.FindAsync(homeworkId);
+                if (homework == null)
+                    throw new ProfessorControllerException("Homework not found", 404);
 
-            var model = new HomeworkViewModel
+                var model = new HomeworkViewModel
+                {
+                    Id = homework.Id,
+                    Title = homework.Title,
+                    Content = homework.Content,
+                    Description = homework.Description,
+                    EndDate = homework.EndDate,
+                    Mandatory = homework.Mandatory,
+                    Penalty = homework.Penalty,
+                    AfterEndUploadDate = homework.AfterEndDateUpload
+                };
+
+                return View(model);
+            }
+            catch(ProfessorControllerException ex)
             {
-                Id = homework.Id,
-                Title = homework.Title,
-                Content = homework.Content,
-                Description = homework.Description,
-                EndDate = homework.EndDate,
-                Mandatory = homework.Mandatory,
-                Penalty = homework.Penalty,
-                AfterEndUploadDate = homework.AfterEndDateUpload
-            };
-
-            return View(model);
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
 
         [HttpPost]
@@ -509,21 +536,28 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GradeHomework(string homeworkId)
         {
-            var homework = await _context.Homeworks.FindAsync(homeworkId);
-            if (homework == null)
-                return NotFound();
-
-            var model = new GradeHomeworkViewModel
+            try
             {
-                Id = homework.Id,
-                Title = homework.Title,
-                Content = homework.Content,
-                Description = homework.Description,
-                Grade = (double)homework.Grade,
-                Comment = homework.Comment
-            };
+                var homework = await _context.Homeworks.FindAsync(homeworkId);
+                if (homework == null)
+                    throw new ProfessorControllerException("Homework not found", 404);
 
-            return View(model);
+                var model = new GradeHomeworkViewModel
+                {
+                    Id = homework.Id,
+                    Title = homework.Title,
+                    Content = homework.Content,
+                    Description = homework.Description,
+                    Grade = (double)homework.Grade,
+                    Comment = homework.Comment
+                };
+
+                return View(model);
+            }
+            catch (ProfessorControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
 
         [HttpPost]
