@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.ViewModels;
@@ -13,14 +14,19 @@ namespace StudentManagementSystem.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly AppDatabaseContext _context;
+        private readonly ILogger<AccountController> _logger;
         #endregion
 
         #region Contructors
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, AppDatabaseContext context)
+        public AccountController(UserManager<User> userManager, 
+            SignInManager<User> signInManager, 
+            AppDatabaseContext context,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
+            _logger = logger;
         }
         #endregion
        
@@ -182,19 +188,25 @@ namespace StudentManagementSystem.Controllers
                 return View("Login", model);
             }
 
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                _logger.LogInformation($"\n\n\n\n\n\n\nUser Role: {role}\n\n\n\n\n\n");
+            }
+
             // Find which role the user belongs to and redirect them
             // to their dashboards
-            if(await _userManager.IsInRoleAsync(user, "Student"))
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+            else if (await _userManager.IsInRoleAsync(user, "Student"))
             {
                 return RedirectToAction("Index", "Student");
             }
             else if(await _userManager.IsInRoleAsync(user, "Professor"))
             {
                 return RedirectToAction("Index", "Professor");
-            }
-            else if(await _userManager.IsInRoleAsync(user, "Admin"))
-            {
-                return RedirectToAction("Index", "Admin");
             }
 
             return RedirectToAction("Index", "Home");

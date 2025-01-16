@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250115152613_GradeCalculationFormulaDiscipline")]
-    partial class GradeCalculationFormulaDiscipline
+    [Migration("20250116154025_AdminUser")]
+    partial class AdminUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -181,19 +181,19 @@ namespace StudentManagementSystem.Migrations
                         new
                         {
                             Id = "1",
-                            GradeCalculationFormula = "MA",
+                            GradeCalculationFormula = "MA1",
                             Name = "Matematica"
                         },
                         new
                         {
                             Id = "2",
-                            GradeCalculationFormula = "MA",
+                            GradeCalculationFormula = "MA1",
                             Name = "Fizica"
                         },
                         new
                         {
                             Id = "3",
-                            GradeCalculationFormula = "MA",
+                            GradeCalculationFormula = "MA1",
                             Name = "Programare"
                         });
                 });
@@ -227,6 +227,9 @@ namespace StudentManagementSystem.Migrations
 
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
+
+                    b.Property<bool?>("HasGrade")
+                        .HasColumnType("bit");
 
                     b.Property<string>("HomeworkType")
                         .IsRequired()
@@ -326,6 +329,9 @@ namespace StudentManagementSystem.Migrations
                     b.Property<string>("DisciplineId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<double?>("GradeAverage")
+                        .HasColumnType("float");
+
                     b.HasKey("StudentId", "DisciplineId");
 
                     b.HasIndex("DisciplineId");
@@ -415,7 +421,17 @@ namespace StudentManagementSystem.Migrations
                 {
                     b.HasBaseType("StudentManagementSystem.Models.Homework");
 
+                    b.Property<int>("TimeLimit")
+                        .HasColumnType("int");
+
                     b.HasDiscriminator().HasValue("Quiz");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Admin", b =>
+                {
+                    b.HasBaseType("StudentManagementSystem.Models.User");
+
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
@@ -553,6 +569,15 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Discipline");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Admin", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.User", null)
+                        .WithOne()
+                        .HasForeignKey("StudentManagementSystem.Models.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>

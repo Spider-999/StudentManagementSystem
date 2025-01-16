@@ -1,0 +1,103 @@
+﻿@model List<StudentManagementSystem.Models.Homework>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Teme";
+}
+
+
+<h2>Teme</h2>
+
+@if (!Model.Any())
+{
+    <p>Nu ai nicio tema =^)</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titlu</th>
+                <th>Descriere</th>
+                <th>Data creari</th>
+                <th>Termen limita</th>
+                <th>Nota</th>
+                <th>Stare</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var homework in Model)
+            {
+                <tr>
+                    <td>@homework.Title</td>
+                    <td>@homework.Description</td>
+                    <td>@homework.CreationDate</td>
+                    <td>@homework.EndDate</td>
+
+                    @if(homework.HasGrade == true)
+                    {
+                        <td>@homework.Grade / 10</td>
+                    }
+                    else
+                    {
+                        <td>Fara nota</td>
+                    }
+
+                    @if(homework.Status == true)
+                    {
+                        <td>Evaluata</td>
+                    }
+                    else
+                    {
+                        <td>Neevaluata</td>
+                    }
+
+                    <!-- 
+                    The student should be able to complete the homework/quiz/project only
+                    if the current date passed the creation date and if the homework
+                    hasn't been completed yet
+                    -->
+                    @if (DateTime.Now >= homework.CreationDate)
+                    {
+                        <!-- 
+                        Can upload only if after end date upload is true or if 
+                        the current date is less than the end date
+                        -->
+                        @if(homework.AfterEndDateUpload == true || DateTime.Now < homework.EndDate)
+                        {
+                            @if(homework is StudentManagementSystem.Models.Project)
+                            {
+                                <td>
+                                    <a asp-controller="Admin" asp-action="UploadProjectFiles" asp-route-projectID="@homework.Id" class="btn btn-primary">Incarca proiectul</a>
+                                </td>
+                            }
+                            else if (homework is StudentManagementSystem.Models.Quiz)
+                            {
+                                <!-- The student shouldnt be able to submit the quiz again -->
+                                if (homework.Status == false)
+                                {
+                                    <td>
+                                        <a class="btn btn-primary" asp-controller="Admin" asp-action="CompleteQuiz" asp-route-id="@homework.Id">Incepe testul</a>
+                                    </td>
+                                }
+                            }
+                            else if(homework is StudentManagementSystem.Models.Homework)
+                            {
+                                <td>
+                                    <a class="btn btn-primary" asp-controller="Admin" asp-action="EditHomework" asp-route-id="@homework.Id">Acceseaza Tema</a>
+                                </td>
+                            }
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+}

@@ -30,17 +30,17 @@ namespace StudentManagementSystem.Controllers
                 if (user == null)
                     return View();
 
-                if (await _userManager.IsInRoleAsync(user, "Student"))
+                if (await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                else if (await _userManager.IsInRoleAsync(user, "Student"))
                 {
                     return RedirectToAction("Index", "Student");
                 }
                 else if (await _userManager.IsInRoleAsync(user, "Professor"))
                 {
                     return RedirectToAction("Index", "Professor");
-                }
-                else if (await _userManager.IsInRoleAsync(user, "Admin"))
-                {
-                    return RedirectToAction("Index", "Admin");
                 }
             }
             return View();

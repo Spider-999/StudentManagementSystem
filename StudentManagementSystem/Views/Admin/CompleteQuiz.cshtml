@@ -1,0 +1,33 @@
+﻿@model StudentManagementSystem.ViewModels.CompleteQuizViewModel
+
+@{
+    ViewData["Title"] = "Take Quiz";
+}
+
+<h2>@Model.Title</h2>
+
+<form asp-action="CompleteQuiz" method="post">
+    <input type="hidden" asp-for="QuizID" />
+    <input type="hidden" asp-for="Title" />
+    @for (int i = 0; i < Model.Questions.Count; i++)
+    {
+        <div class="form-group">
+            <label>@Model.Questions[i].Question</label>
+            <input type="hidden" asp-for="Questions[i].Question" />
+            @for (int j = 0; j < Model.Questions[i].Answers.Count; j++)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="Questions[i].SelectedAnswer" value="@Model.Questions[i].Answers[j]" />
+                    <label class="form-check-label">@Model.Questions[i].Answers[j]</label>
+                </div>
+            }
+        </div>
+    }
+    <p>Nota finala = (nr. raspunsuri corected) / (nr. intrebari) * 10</p>
+    <button type="submit" class="btn btn-primary">Trimite testul</button>
+</form>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250115202353_TimeLimitQuiz")]
-    partial class TimeLimitQuiz
+    [Migration("20250116135154_HasGradeColumn")]
+    partial class HasGradeColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -227,6 +227,9 @@ namespace StudentManagementSystem.Migrations
 
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
+
+                    b.Property<bool?>("HasGrade")
+                        .HasColumnType("bit");
 
                     b.Property<string>("HomeworkType")
                         .IsRequired()

@@ -15,12 +15,13 @@ namespace StudentManagementSystem.Controllers
     public class AdminController : Controller
     {
         #region Private properties
-        private UserManager<IdentityUser> _userManager;
+        private UserManager<User> _userManager;
         private AppDatabaseContext _context;
         private readonly ILogger<ProfessorController> _logger;
         #endregion
+
         #region Constructor 
-        public AdminController(UserManager<IdentityUser> userManager,
+        public AdminController(UserManager<User> userManager,
                            AppDatabaseContext context,
                            ILogger<ProfessorController> logger)
         {
@@ -28,8 +29,10 @@ namespace StudentManagementSystem.Controllers
             _context = context;
             _logger = logger;
         }
+
         #endregion
-        #region User methods
+
+        #region Admin methods
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class QuizAndQuizQuestions : Migration
+    public partial class HasGradeColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,7 +59,8 @@ namespace StudentManagementSystem.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GradeAverage = table.Column<double>(type: "float", nullable: true)
+                    GradeAverage = table.Column<double>(type: "float", nullable: true),
+                    GradeCalculationFormula = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -232,9 +233,12 @@ namespace StudentManagementSystem.Migrations
                     AfterEndDateUpload = table.Column<bool>(type: "bit", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsTemplate = table.Column<bool>(type: "bit", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HasGrade = table.Column<bool>(type: "bit", nullable: true),
                     DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    HomeworkType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false)
+                    HomeworkType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    TimeLimit = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -256,7 +260,8 @@ namespace StudentManagementSystem.Migrations
                 columns: table => new
                 {
                     StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GradeAverage = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -318,12 +323,12 @@ namespace StudentManagementSystem.Migrations
 
             migrationBuilder.InsertData(
                 table: "Disciplines",
-                columns: new[] { "Id", "GradeAverage", "Name" },
+                columns: new[] { "Id", "GradeAverage", "GradeCalculationFormula", "Name" },
                 values: new object[,]
                 {
-                    { "1", null, "Matematica" },
-                    { "2", null, "Fizica" },
-                    { "3", null, "Programare" }
+                    { "1", null, "MA1", "Matematica" },
+                    { "2", null, "MA1", "Fizica" },
+                    { "3", null, "MA1", "Programare" }
                 });
 
             migrationBuilder.CreateIndex(
