@@ -91,14 +91,26 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewStudentHomeworks(string studentId)
         {
+            // Get the current user
+            var user = await _userManager.GetUserAsync(User);
+            if(user == null) 
+                return NotFound();
             // Get the student the professor clicked on
             var student = await _context.Students.FindAsync(studentId);
             if (student == null)
                 return NotFound();
 
-            // Get the student's homeworks
+            var professor = await _context.Professors
+                                   .Include(p => p.Discipline)
+                                   .FirstOrDefaultAsync(p => p.Id == user.Id);
+            if(professor == null)
+                return NotFound();
+
+            // Get the student's homeworks but only for the professors discipline
+            // A math professor shouldnt be able to view and grade physics homework.
             var homeworks = await _context.Homeworks
-                .Where(s => s.StudentId == studentId)
+                .Where(s => s.StudentId == studentId 
+                && s.DisciplineId == professor.DisciplineId)
                 .ToListAsync();
 
             ViewBag.StudentName = student.Name;
@@ -506,6 +518,7 @@ namespace StudentManagementSystem.Controllers
                         AfterEndDateUpload = model.AfterEndUploadDate,
                         Penalty = model.Penalty,
                         StudentId = student.Id,
+                        DisciplineId = professor.DisciplineId,
                         TimeLimit = model.TimeLimit,
                         IsTemplate = false
                     };
@@ -653,7 +666,7 @@ namespace StudentManagementSystem.Controllers
             if (double.IsNaN(gradeAverage))
                 gradeAverage = 0.00;
 
-            return Math.Round(gradeAverage, 2);
+            return Math.Round(gradeAverage,2);
         }
 
         public double CalculateGeneralGrade(Student student)
