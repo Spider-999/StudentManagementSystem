@@ -586,6 +586,7 @@ namespace StudentManagementSystem.Controllers
                 return NotFound();
 
             homework.Grade = model.Grade;
+            homework.Content = model.Content;
             homework.Comment = model.Comment;
             homework.Status = true;
             _context.Update(homework);

@@ -119,9 +119,8 @@ namespace StudentManagementSystem.Controllers
                 var updatedHomework = await _context.Homeworks.FindAsync(homework.Id);
                 if(updatedHomework == null)
                     return NotFound();
-                if(homework.Grade == 0) { 
                     updatedHomework.Content = homework.Content;
-                    _context.Update(updatedHomework);
+                _context.Update(updatedHomework);
                     try
                     {
                         await _context.SaveChangesAsync();
@@ -130,7 +129,7 @@ namespace StudentManagementSystem.Controllers
                     {
                         ModelState.AddModelError("", "A aparut o eroare, schimbarile nu au avut efect.");
                     }
-                }
+                
                 return RedirectToAction(nameof(Homework));
             }
 
