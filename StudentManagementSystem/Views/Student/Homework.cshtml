@@ -70,6 +70,10 @@ else
                                 <td>
                                     <a asp-controller="Student" asp-action="UploadProjectFiles" asp-route-projectID="@homework.Id" class="btn btn-primary">Incarca proiectul</a>
                                 </td>
+                                <!-- Added this for the user to be able to see the professors comments -->
+                                <td>
+                                    <a class="btn btn-primary" asp-controller="Student" asp-action="EditHomework" asp-route-id="@homework.Id">Acceseaza Tema</a>
+                                </td>
                             }
                             else if (homework is StudentManagementSystem.Models.Quiz)
                             {
