@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Exceptions;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.Services;
 using StudentManagementSystem.ViewModels;
 
 namespace StudentManagementSystem.Controllers
@@ -18,12 +19,18 @@ namespace StudentManagementSystem.Controllers
         private readonly ILogger<ProfessorController> _logger;
         #endregion
 
+        #region Services
+        private LeaderboardService _leaderboardService;
+        #endregion
+
         #region Constructor
-        public StudentController(UserManager<User> userManager, AppDatabaseContext context, ILogger<ProfessorController> logger)
+        public StudentController(UserManager<User> userManager, AppDatabaseContext context, 
+            ILogger<ProfessorController> logger, LeaderboardService leaderboardService)
         {
             _userManager = userManager;
             _context = context;
             _logger = logger;
+            _leaderboardService = leaderboardService;
         }
         #endregion
 
@@ -244,29 +251,32 @@ namespace StudentManagementSystem.Controllers
                 }
 
                 if (quizQuestion.CorrectAnswer == question.SelectedAnswer)
-                {
-                    
                     correctAnswers++;
-                }
             }
 
+            double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00;
             // If the homework was uploaded after the deadline substract the penalty from the final grade
             if (quiz.AfterEndDateUpload == true && DateTime.Now >= quiz.EndDate)
             {
-                double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00 - (double)quiz.Penalty;
-                quiz.Grade = grade;
-                _context.Update(quiz);
-                await _context.SaveChangesAsync();
-            }
-            // Otherwise dont give a penalty to the grade
-            else if(quiz.AfterEndDateUpload == false && DateTime.Now < quiz.EndDate)
-            {
-                double grade = ((double)correctAnswers / model.Questions.Count) * 9.00 + 1.00;
-                quiz.Grade = grade;
-                _context.Update(quiz);
-                await _context.SaveChangesAsync();
+                grade -= -(double)quiz.Penalty;
             }
 
+            // Update the quiz grade and status
+            quiz.Grade = grade;
+            quiz.Status = true;
+            _context.Update(quiz);
+
+            // Update the homework record for that quiz
+            var homework = await _context.Homeworks.
+                                FirstOrDefaultAsync(h => h.Id == quiz.Id);
+            if(homework != null)
+            {
+                homework.Grade = grade;
+                homework.Status = true;
+                _context.Update(homework);
+            }
+
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Homework));
         }
 
@@ -298,6 +308,13 @@ namespace StudentManagementSystem.Controllers
 
             return View(studentGradesViewModel);
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Leaderboard()
+        {
+            var leaderboardData = await _leaderboardService.GetLeaderboardAsync();
+            return View(leaderboardData);
         }
     }
 }

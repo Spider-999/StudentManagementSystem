@@ -6,11 +6,10 @@ namespace StudentManagementSystem.ViewModels
     {
         #region Private properties
         private string _id;
-        private string _title;
-        private string _description;
-        private string _content;
+        private string? _title;
+        private string? _description;
         private double _grade;
-        private string _comment;
+        private string? _comment;
         #endregion
 
         #region Getters & Setters
@@ -20,22 +19,16 @@ namespace StudentManagementSystem.ViewModels
             set => _id = value;
         }
         [Display(Name ="Titlu")]
-        public string Title
+        public string? Title
         {
             get => _title;
             set => _title = value;
         }
         [Display(Name ="Cerinta")]
-        public string Description
+        public string? Description
         {
             get => _description;
             set => _description = value;
-        }
-        [Display(Name ="Content")]
-        public string Content
-        {
-            get => _content;
-            set => _content = value;    
         }
         [Required(ErrorMessage ="Nota este necesara")]
         [Range(1, 10, ErrorMessage="Nota trebuie sa fie intre 1 si 10")]
@@ -46,7 +39,7 @@ namespace StudentManagementSystem.ViewModels
             set => _grade = value;
         }
         [Display(Name ="Comentariu")]
-        public string Comment
+        public string? Comment
         {
             get => _comment;
             set => _comment = value;

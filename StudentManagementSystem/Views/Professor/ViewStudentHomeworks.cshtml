@@ -53,13 +53,16 @@ else
                     @if (homework is StudentManagementSystem.Models.Project)
                     {
                         <td>
-                        <a asp-controller="Professor" asp-action="DownloadProjectFiles" asp-route-projectId="@homework.Id" class="btn btn-primary btn-sm">Descarca fisierele</a>
+                            <a asp-controller="Professor" asp-action="DownloadProjectFiles" asp-route-projectId="@homework.Id" class="btn btn-primary btn-sm">Descarca fisierele</a>
                         </td>
                     }
                     <td>
-                    <a asp-controller="Professor" asp-action="GradeHomework" asp-route-homeworkId="@homework.Id" class="btn btn-primary btn-sm">
-                        Adauaga o nota
-                    </a>
+                        @if (homework is not StudentManagementSystem.Models.Quiz)
+                        {
+                            <a asp-controller="Professor" asp-action="GradeHomework" asp-route-homeworkId="@homework.Id" class="btn btn-primary btn-sm">
+                                Adauaga o nota
+                            </a>
+                        }
                     </td>
                 </tr>
             }
