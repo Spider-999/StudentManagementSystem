@@ -33,6 +33,7 @@ namespace StudentManagementSystem.Controllers
         #endregion
 
         #region Admin methods
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -40,6 +41,54 @@ namespace StudentManagementSystem.Controllers
             if (user == null)
                 return NotFound();
             return View(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewAllUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var userRolesViewModel = new List<UserAndRolesViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                // I dont want the admin users to be viewable
+                if (!roles.Contains("Admin"))
+                {
+                    userRolesViewModel.Add(new UserAndRolesViewModel
+                    {
+                        User = user,
+                        Roles = roles
+                    });
+                }
+            }
+            return View(userRolesViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            // Find the user
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning($"User with ID: {userId} not found.");
+                return NotFound();
+            }
+
+            // Try to delete it
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(ViewAllUsers));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return RedirectToAction(nameof(ViewAllUsers));
         }
         #endregion
 

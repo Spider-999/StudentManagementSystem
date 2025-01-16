@@ -107,6 +107,13 @@ namespace StudentManagementSystem.Data
                 .HasValue<Project>("Project")
                 .HasValue<Quiz>("Quiz");
 
+            // Configure cascade delete for related entities
+            builder.Entity<Homework>()
+                .HasOne(h => h.Student)
+                .WithMany(s => s.Homeworks)
+                .HasForeignKey(h => h.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             //The necessary methods for creating the many to many relationship between Student and Discipline and specifying the foreign keys
             builder.Entity<StudentDiscipline>().HasKey(sd => new { sd.StudentId, sd.DisciplineId });
             builder.Entity<StudentDiscipline>().HasOne(sd => sd.Student).WithMany(s => s.StudentDisciplines).HasForeignKey(sd => sd.StudentId);
