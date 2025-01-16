@@ -142,6 +142,46 @@ namespace StudentManagementSystem.Controllers
             }
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult CreateStudent()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateStudent(CreateStudentUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new Student
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Name = model.Name,
+                    YearOfStudy = model.YearOfStudy
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, "Student");
+                    if (roleResult.Succeeded)
+                    {
+                        return RedirectToAction(nameof(ViewAllUsers));
+                    }
+                    foreach (var error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return View(model);
+        }
         #endregion
 
 
