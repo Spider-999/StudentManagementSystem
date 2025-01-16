@@ -1,0 +1,26 @@
+﻿@model StudentManagementSystem.ViewModels.GradeCalculationFormulaViewModel
+
+@{
+    ViewData["Title"] = "Seteaza formula de calcul";
+}
+
+<h2>Seteaza formula de calcul pentru disciplina @ViewBag.DisciplineName</h2>
+
+<form asp-action="GradeCalculationFormula" method="post">
+    <input type="hidden" asp-for="DisciplineID" />
+    <div class="form-group">
+        <label asp-for="Formula" class="control-label"></label>
+        <select asp-for="Formula" class="form-control">
+            <option value="MA1">Media aritmetica</option>
+            <option value="MA2">Media aritmetica rotunjita in sus</option>
+            <option value="MA3">Media aritmetica rotunjita in jos</option>
+        </select>
+        <span asp-validation-for="Formula" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Salveaza formula</button>
+</form>
+
+@section Scripts 
+{
+    <partial name="_ValidationScriptsPartial" />
+}

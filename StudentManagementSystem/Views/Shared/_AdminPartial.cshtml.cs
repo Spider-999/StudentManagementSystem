@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace StudentManagementSystem.Views.Admin
+namespace StudentManagementSystem.Views.Shared
 {
-    public class ViewStudentsModel : PageModel
+    public class _AdminPartialModel : PageModel
     {
         public void OnGet()
         {

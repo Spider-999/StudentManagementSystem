@@ -1,0 +1,26 @@
+﻿@model StudentManagementSystem.ViewModels.StudentGradesViewModel
+
+<h2>@Model.StudentName's Grades</h2>
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-light">
+        <tr>
+            <th>Disciplina</th>
+            <th>Media</th>
+            <th>Media generala</th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var discipline in Model.Disciplines)
+            {
+                <tr>
+                    <td>@discipline.DisciplineName</td>
+                    <td>@discipline.GradeAverage</td>
+                    @if (discipline == Model.Disciplines.First())
+                    {
+                        <td rowspan="@Model.Disciplines.Count">@Model.Disciplines.First().GeneralGrade</td>
+                    }
+                </tr>
+            }
+    </tbody>
+</table>

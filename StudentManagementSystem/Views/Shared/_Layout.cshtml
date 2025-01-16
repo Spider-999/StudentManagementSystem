@@ -19,6 +19,10 @@
         {
             <partial name="_ProfessorPartial"/>
         }
+        else if (User.IsInRole("Admin"))
+        {
+            <partial name="_AdminPartial" />
+        }
         else
         {
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">

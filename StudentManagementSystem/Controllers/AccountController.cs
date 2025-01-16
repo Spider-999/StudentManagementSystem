@@ -123,6 +123,14 @@ namespace StudentManagementSystem.Controllers
                         YearOfStudy = model.YearOfStudy
                     };
                     break;
+                case "Admin":
+                    user = new User
+                    {
+                        Name = model.Name,
+                        Email = model.Email,
+                        UserName = model.Email
+                    };
+                    break;
                 case "Professor":
                     // Find all disciplines in the database
                     var discipline = await _context.Disciplines.FirstOrDefaultAsync(d => d.Name == model.Department);
