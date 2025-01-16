@@ -531,6 +531,7 @@ namespace StudentManagementSystem.Controllers
                 Id = homework.Id,
                 Title = homework.Title,
                 Description = homework.Description,
+                Content = homework.Content,
                 Grade = (double)homework.Grade,
                 Comment = homework.Comment
             };
