@@ -23,6 +23,13 @@ Time based quiz with questions and the student gets the grade after submitting t
 ### Assignment
 Students type the solution in a text box and send it to the professor to be graded.
 
+### Gamification elements.
+For gamification there is a leaderboard that shows students with the most completed homeworks in
+descending order.
+
+### Handling of exceptions
+The handling of exceptions is done using mostly custom exceptions.
+
 ### Project
 Students can upload one or more files and the professor can download them as a ZIP archive.
 
