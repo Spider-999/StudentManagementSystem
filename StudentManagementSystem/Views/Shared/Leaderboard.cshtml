@@ -1,0 +1,33 @@
+﻿@model List<StudentManagementSystem.ViewModels.LeaderboardViewModel>
+
+@{
+    ViewData["Title"] = "Clasament";
+}
+
+<h2>Clasament cu studentii cu cele mai multe teme completate</h2>
+
+@if (!Model.Any())
+{
+    <p>Nu exista date</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nume Student</th>
+                <th>Teme completate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.StudentName</td>
+                    <td>@student.Score</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

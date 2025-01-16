@@ -2,6 +2,13 @@ html {
   font-size: 14px;
 }
 
+code{
+    color:black;
+    background-color:#DDDDDD;
+    padding:1px;
+    border-radius:2px;
+}
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;

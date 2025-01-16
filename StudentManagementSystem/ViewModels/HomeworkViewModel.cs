@@ -16,6 +16,8 @@ namespace StudentManagementSystem.ViewModels
         private bool? _mandatory;
         private double? _penalty;
         private bool? _afterEndDateUpload;
+        private string? _homeworkType;
+        private string? _comment;
         #endregion
 
         #region Getters & setters
@@ -45,6 +47,7 @@ namespace StudentManagementSystem.ViewModels
             set => _content = value;
         }
 
+        [Display(Name = "Data creeari")]
         public DateTime? CreationDate
         {
             get => _creationDate;
@@ -58,12 +61,14 @@ namespace StudentManagementSystem.ViewModels
             set => _endDate = value;
         }
 
+        [Display(Name = "Nota")]
         public double? Grade
         {
             get => _grade;
             set => _grade = value;
         }
 
+        [Display(Name = "Stare")]
         public bool? Status
         {
             get => _status;
@@ -89,6 +94,19 @@ namespace StudentManagementSystem.ViewModels
         {
             get => _afterEndDateUpload;
             set => _afterEndDateUpload = value;
+        }
+
+        [Display(Name ="Tipul temei")]
+        public string? HomeworkType
+        {
+            get => _homeworkType;
+            set => _homeworkType = value;
+        }
+
+        public string? Comment
+        {
+            get => _comment;
+            set => _comment= value;
         }
         #endregion
     }

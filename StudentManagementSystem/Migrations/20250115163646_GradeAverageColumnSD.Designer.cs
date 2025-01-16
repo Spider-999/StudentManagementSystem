@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250112191302_OneToManyProfessorsDisciplines")]
-    partial class OneToManyProfessorsDisciplines
+    [Migration("20250115163646_GradeAverageColumnSD")]
+    partial class GradeAverageColumnSD
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -166,6 +166,9 @@ namespace StudentManagementSystem.Migrations
                     b.Property<double?>("GradeAverage")
                         .HasColumnType("float");
 
+                    b.Property<string>("GradeCalculationFormula")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -178,27 +181,34 @@ namespace StudentManagementSystem.Migrations
                         new
                         {
                             Id = "1",
-                            Name = "Mathematics"
+                            GradeCalculationFormula = "MA1",
+                            Name = "Matematica"
                         },
                         new
                         {
                             Id = "2",
-                            Name = "Physics"
+                            GradeCalculationFormula = "MA1",
+                            Name = "Fizica"
                         },
                         new
                         {
                             Id = "3",
-                            Name = "ComputerScience"
+                            GradeCalculationFormula = "MA1",
+                            Name = "Programare"
                         });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Homework", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<bool?>("AfterEndDateUpload")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -217,6 +227,14 @@ namespace StudentManagementSystem.Migrations
 
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
+
+                    b.Property<string>("HomeworkType")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<bool?>("IsTemplate")
+                        .HasColumnType("bit");
 
                     b.Property<bool?>("Mandatory")
                         .HasColumnType("bit");
@@ -241,35 +259,63 @@ namespace StudentManagementSystem.Migrations
 
                     b.ToTable("Homeworks");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            AfterEndDateUpload = false,
-                            Content = "",
-                            Description = "Add 2+2",
-                            DisciplineId = "1",
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            Title = "Math1"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            AfterEndDateUpload = false,
-                            Content = "",
-                            Description = "F=m x _?",
-                            DisciplineId = "2",
-                            Grade = 0.0,
-                            Mandatory = true,
-                            Penalty = 1.0,
-                            Status = false,
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            Title = "Physics"
-                        });
+                    b.HasDiscriminator<string>("HomeworkType").HasValue("Homework");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("FileContent")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectID");
+
+                    b.ToTable("ProjectFiles");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.QuizQuestion", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.PrimitiveCollection<string>("Answers")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CorrectAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuizID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuizID");
+
+                    b.ToTable("QuizQuestions");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
@@ -280,33 +326,14 @@ namespace StudentManagementSystem.Migrations
                     b.Property<string>("DisciplineId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<double?>("GradeAverage")
+                        .HasColumnType("float");
+
                     b.HasKey("StudentId", "DisciplineId");
 
                     b.HasIndex("DisciplineId");
 
                     b.ToTable("StudentDisciplines");
-
-                    b.HasData(
-                        new
-                        {
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            DisciplineId = "1"
-                        },
-                        new
-                        {
-                            StudentId = "df114734-138a-438a-9e96-12d02427a538",
-                            DisciplineId = "2"
-                        },
-                        new
-                        {
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            DisciplineId = "1"
-                        },
-                        new
-                        {
-                            StudentId = "10db9002-a008-4154-bdd8-9ca70870cba6",
-                            DisciplineId = "2"
-                        });
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.User", b =>
@@ -378,6 +405,20 @@ namespace StudentManagementSystem.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Project", b =>
+                {
+                    b.HasBaseType("StudentManagementSystem.Models.Homework");
+
+                    b.HasDiscriminator().HasValue("Project");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Quiz", b =>
+                {
+                    b.HasBaseType("StudentManagementSystem.Models.Homework");
+
+                    b.HasDiscriminator().HasValue("Quiz");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
@@ -476,6 +517,28 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.ProjectFile", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Project", "Project")
+                        .WithMany("ProjectFiles")
+                        .HasForeignKey("ProjectID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.QuizQuestion", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Quiz", "Quiz")
+                        .WithMany("QuizQuestions")
+                        .HasForeignKey("QuizID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Quiz");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.StudentDiscipline", b =>
                 {
                     b.HasOne("StudentManagementSystem.Models.Discipline", "Discipline")
@@ -528,6 +591,16 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Professors");
 
                     b.Navigation("StudentDisciplines");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Project", b =>
+                {
+                    b.Navigation("ProjectFiles");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Quiz", b =>
+                {
+                    b.Navigation("QuizQuestions");
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>

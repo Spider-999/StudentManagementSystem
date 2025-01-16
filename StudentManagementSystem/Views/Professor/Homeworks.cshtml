@@ -12,20 +12,31 @@
     <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateHomework">
         Creeaza o tema
     </a>
+    <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateQuiz">
+        Creeaza un test
+    </a>
+    <a class="btn btn-primary" asp-controller="Professor" asp-action="ExportGradesToCSV">
+        Descarca notele studentilor in format CSV
+    </a>
 }
 else
 {
     <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateHomework">
         Creeaza o tema
     </a>
-    <table class="table">
-        <thead>
+    <a class="btn btn-primary" asp-controller="Professor" asp-action="CreateQuiz">
+        Creeaza un test
+    </a>
+    <a class="btn btn-primary" asp-controller="Professor" asp-action="ExportGradesToCSV">
+        Descarca notele studentilor in format CSV
+    </a>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-light">
             <tr>
                 <th>Titlu</th>
                 <th>Descriere</th>
+                <th>Data creeari</th>
                 <th>Termen limita</th>
-                <th>Nota</th>
-                <th>Stare</th>
             </tr>
         </thead>
         <tbody>
@@ -34,9 +45,9 @@ else
                 <tr>
                     <td>@homework.Title</td>
                     <td>@homework.Description</td>
-                    <td>@homework.EndDate?.ToString("yyyy-MM-dd")</td>
-                    <td>@homework.Grade</td>
-                    <td>@homework.Status</td>
+                    <td>@homework.CreationDate</td>
+                    <td>@homework.EndDate</td>
+
                     <td>
                         <a class="btn btn-danger" asp-route-homeworkId="@homework.Id" asp-controller="Professor" asp-action="DeleteHomework">
                             Sterge

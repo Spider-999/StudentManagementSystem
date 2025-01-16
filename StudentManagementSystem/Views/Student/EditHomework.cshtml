@@ -1,19 +1,35 @@
-﻿@model StudentManagementSystem.Models.Homework
+﻿@model StudentManagementSystem.ViewModels.HomeworkViewModel
 
 @{
     ViewData["Title"] = "Schimba Tema";
 }
 
-<h2>Edit Homework</h2>
+<h2>Actualizeaza Tema</h2>
 
 <form asp-action="EditHomework" method="post">
-
+    <input type="hidden" asp-for="Id" />
     <div class="form-group">
-        <label asp-for="Content"></label>
-        <textarea asp-for="Content">@Model.Content</textarea>
+        <label asp-for="Title"></label>
+        <span>@Model.Title</span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Salveaza</button>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <span>@Model.Description</span>
+    </div>
+
+            <div class="form-group">
+                <label asp-for="Content"></label>
+                <textarea asp-for="Content"
+                rows="15"
+                cols="40">@Model.Content</textarea>
+            </div>
+
+    <div class="form-group">
+        <label asp-for="Comment"></label>
+        <code>@Model.Comment</code>
+    </div>
+        <button type="submit" class="btn btn-primary">Salveaza</button>
 </form>
 
 @section Scripts {

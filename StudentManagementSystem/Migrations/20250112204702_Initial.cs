@@ -8,7 +8,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentManagementSystem.Migrations
 {
     /// <inheritdoc />
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
     public partial class Initial : Migration
+========
+    public partial class QuizAndQuizQuestions : Migration
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250114151953_QuizAndQuizQuestions.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -192,7 +196,11 @@ namespace StudentManagementSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                 name: "Professor",
+========
+                name: "Professors",
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250114151953_QuizAndQuizQuestions.cs
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -201,15 +209,15 @@ namespace StudentManagementSystem.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Professor", x => x.Id);
+                    table.PrimaryKey("PK_Professors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Professor_AspNetUsers_Id",
+                        name: "FK_Professors_AspNetUsers_Id",
                         column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Professor_Disciplines_DisciplineId",
+                        name: "FK_Professors_Disciplines_DisciplineId",
                         column: x => x.DisciplineId,
                         principalTable: "Disciplines",
                         principalColumn: "Id",
@@ -231,8 +239,15 @@ namespace StudentManagementSystem.Migrations
                     Penalty = table.Column<double>(type: "float", nullable: true),
                     AfterEndDateUpload = table.Column<bool>(type: "bit", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                     DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+========
+                    IsTemplate = table.Column<bool>(type: "bit", nullable: true),
+                    DisciplineId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    HomeworkType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false)
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250114151953_QuizAndQuizQuestions.cs
                 },
                 constraints: table =>
                 {
@@ -273,14 +288,64 @@ namespace StudentManagementSystem.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+========
+            migrationBuilder.CreateTable(
+                name: "ProjectFiles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileContent = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    ProjectID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProjectFiles_Homeworks_ProjectID",
+                        column: x => x.ProjectID,
+                        principalTable: "Homeworks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuizQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Question = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Answers = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorrectAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    QuizID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuizQuestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuizQuestions_Homeworks_QuizID",
+                        column: x => x.QuizID,
+                        principalTable: "Homeworks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250114151953_QuizAndQuizQuestions.cs
             migrationBuilder.InsertData(
                 table: "Disciplines",
                 columns: new[] { "Id", "GradeAverage", "Name" },
                 values: new object[,]
                 {
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                     { "1", null, "Mathematics" },
                     { "2", null, "Physics" },
                     { "3", null, "ComputerScience" }
+========
+                    { "1", null, "Matematica" },
+                    { "2", null, "Fizica" },
+                    { "3", null, "Programare" }
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250114151953_QuizAndQuizQuestions.cs
                 });
 
             migrationBuilder.CreateIndex(
@@ -333,8 +398,28 @@ namespace StudentManagementSystem.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
                 name: "IX_Professor_DisciplineId",
                 table: "Professor",
+========
+                name: "IX_Professors_DisciplineId",
+                table: "Professors",
+                column: "DisciplineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectFiles_ProjectID",
+                table: "ProjectFiles",
+                column: "ProjectID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizQuestions_QuizID",
+                table: "QuizQuestions",
+                column: "QuizID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentDisciplines_DisciplineId",
+                table: "StudentDisciplines",
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250114151953_QuizAndQuizQuestions.cs
                 column: "DisciplineId");
 
             migrationBuilder.CreateIndex(
@@ -362,16 +447,25 @@ namespace StudentManagementSystem.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Homeworks");
+                name: "Professors");
 
             migrationBuilder.DropTable(
-                name: "Professor");
+                name: "ProjectFiles");
 
             migrationBuilder.DropTable(
+<<<<<<<< HEAD:StudentManagementSystem/Migrations/20250112204702_Initial.cs
+========
+                name: "QuizQuestions");
+
+            migrationBuilder.DropTable(
+>>>>>>>> Hary:StudentManagementSystem/Migrations/20250114151953_QuizAndQuizQuestions.cs
                 name: "StudentDisciplines");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Homeworks");
 
             migrationBuilder.DropTable(
                 name: "Disciplines");

@@ -34,34 +34,38 @@ namespace StudentManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            // Create the user object, see in the helper methods region
-            User user = await CreateUserBasedOnRoleAsync(model);
-            if(user == null)
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError(string.Empty, "Invalid registration!");
-                return View(model);
-            }
-
-            // Attempt to create the user in the database and assign the selected role to the user
-            var registerAttempt = await _userManager.CreateAsync(user, model.Password);
-            var roleAssignAttempt = await _userManager.AddToRoleAsync(user, model.Role);
-
-            if (registerAttempt.Succeeded && roleAssignAttempt.Succeeded)
-            {
-            // Redirect the user to the login page if successful
-                return RedirectToAction("Login", "Account");
-            }
-            else
-            {
-                    // Otherwise, display the errors to the user
-                foreach(var error in roleAssignAttempt.Errors)
+                // Create the user object, see in the helper methods region
+                User user = await CreateUserBasedOnRoleAsync(model);
+                if (user == null)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty, "Invalid registration!");
+                    return View(model);
                 }
-                return View(model);
-            }
 
-            // If the model binding and form submission is not valid, return the view with the model
+                // Attempt to create the user in the database and assign the selected role to the user
+                var registerAttempt = await _userManager.CreateAsync(user, model.Password);
+                var roleAssignAttempt = await _userManager.AddToRoleAsync(user, model.Role);
+                if (await _userManager.IsInRoleAsync(user, "Student"))
+                    await AddStudentDisciplinesOnRegister(user);
+
+                if (registerAttempt.Succeeded && roleAssignAttempt.Succeeded)
+                {
+                    // Redirect the user to the login page if successful
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    // Otherwise, display the errors to the user
+                    foreach (var error in roleAssignAttempt.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    // If the model binding and form submission is not valid, return the view with the model
+                    return View(model);
+                }
+            }
             return View(model);
         }
         #endregion
@@ -121,17 +125,11 @@ namespace StudentManagementSystem.Controllers
                     break;
                 case "Professor":
                     // Find all disciplines in the database
-                    var disciplines = await _context.Disciplines.ToListAsync();
-                    string id = string.Empty;
-                    // Search for the discipline selected by the professor
-                    // and find it's id in the database
-                    foreach (Discipline disc in disciplines)
+                    var discipline = await _context.Disciplines.FirstOrDefaultAsync(d => d.Name == model.Department);
+                    if(discipline == null)
                     {
-                        if (disc.Name == model.Department)
-                        {
-                            id = disc.Id;
-                            break;
-                        }
+                        ModelState.AddModelError(string.Empty, "Disciplina nu a fost gasita pentru profesor!");
+                        return null;
                     }
                     // Create the professor using the found id of the selected
                     // discipline
@@ -141,13 +139,29 @@ namespace StudentManagementSystem.Controllers
                         Email = model.Email,
                         UserName = model.Email,
                         Department = model.Department,
-                        DisciplineId = id
+                        DisciplineId = discipline.Id
                     };
                     break;
                 default:
                     return null;
             }
             return user;
+        }
+
+        public async Task AddStudentDisciplinesOnRegister(User student)
+        {
+                var disciplines = await _context.Disciplines.ToListAsync();
+                // At registration add the student to all the student disciplines that exist
+                foreach (var discipline in disciplines)
+                {
+                    var studentDiscipline = new StudentDiscipline
+                    {
+                        StudentId = student.Id,
+                        DisciplineId = discipline.Id
+                    };
+                    _context.StudentDisciplines.Add(studentDiscipline);
+                }
+                await _context.SaveChangesAsync();
         }
 
         public async Task<IActionResult> RedirectBasedOnRoleAsync(LoginViewModel model)

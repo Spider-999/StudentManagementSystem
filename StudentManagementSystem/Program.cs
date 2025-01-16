@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,11 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDatabaseContext>()
     .AddDefaultTokenProviders();
+#endregion
+
+#region Services
+// Register LeaderboardService
+builder.Services.AddScoped<LeaderboardService>();
 #endregion
 
 #region App configuration
