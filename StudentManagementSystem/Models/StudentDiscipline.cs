@@ -9,6 +9,7 @@
         private Student _student;
         private string _disciplineId;
         private Discipline _discipline;
+        private double? _gradeAverage;
         #endregion
 
         #region Getters & Setters
@@ -31,6 +32,12 @@
         {
             get => _discipline;
             set => _discipline = value;
+        }
+
+        public double? GradeAverage
+        {
+            get => _gradeAverage;
+            set => _gradeAverage = value;
         }
         #endregion
     }

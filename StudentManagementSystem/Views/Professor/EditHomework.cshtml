@@ -19,6 +19,11 @@
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <div class="form-group">
+        <label asp-for="Content"></label>
+        <textarea asp-for="Content" class="form-control"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+    <div class="form-group">
         <label asp-for="EndDate"></label>
         <input asp-for="EndDate" type="datetime-local" class="form-control" />
         <span asp-validation-for="EndDate" class="text-danger"></span>

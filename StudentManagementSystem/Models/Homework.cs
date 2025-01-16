@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentManagementSystem.Models
 {
@@ -6,67 +7,92 @@ namespace StudentManagementSystem.Models
     {
         #region Private properties
         private string _id;
-        private string _title;
-        private string _description;
-        private DateTime _creationDate;
-        private DateTime _endDate;
-        private double _grade;
-        private bool _status;
-        private bool _mandatory;
-        private double _penalty;
-        private bool _afterEndDateUpload;
+        private string? _studentId;
+        private Student? _student;
+        private string? _title;
+        private string? _description;
+        private string _content;
+        private DateTime? _creationDate;
+        private DateTime? _endDate;
+        private double? _grade;
+        private bool? _status;
+        private bool? _mandatory;
+        private double? _penalty;
+        private bool? _afterEndDateUpload;
+        private bool? _isTemplate;
+        private string? _comment;
         #endregion
 
         #region Getters & Setters
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id
         {
             get => _id;
             set => _id = value;
         }
-        public string Title
+        public string? Title
         {
             get => _title;
             set => _title = value;
         }
-        public string Description
+        public string? Description
         {
             get => _description;
             set => _description = value;
         }
-        public DateTime CreationDate
+        public DateTime? CreationDate
         {
             get => _creationDate;
             set => _creationDate = value;
         }
-        public DateTime EndDate
+        public DateTime? EndDate
         {
             get => _endDate;
             set => _endDate = value;
         }
-        public double Grade
+        public double? Grade
         {
             get => _grade;
             set => _grade = value;
         }
-        public bool Status
+        public bool? Status
         {
             get => _status;
             set => _status = value;
         }
-        public bool Mandatory
+        public bool? Mandatory
         {
             get => _mandatory;
             set => _mandatory = value;
         }
-        public double Penalty
+        public double? Penalty
         {
             get => _penalty;
             set => _penalty = value;
         }
-        public bool AfterEndDateUpload
+        public bool? AfterEndDateUpload
         {
             get => _afterEndDateUpload;
             set => _afterEndDateUpload = value;
+        }
+
+        public string? Content
+        {
+            get => _content;
+            set => _content = value;
+        }
+
+        public bool? IsTemplate
+        {
+            get => _isTemplate;
+            set => _isTemplate = value;
+        }
+
+        public string? Comment
+        {
+            get => _comment;
+            set => _comment = value;
         }
         #endregion
 
@@ -78,16 +104,26 @@ namespace StudentManagementSystem.Models
         #endregion
 
         #region Getters & Setters
-        public string DisciplineId
+        public string? DisciplineId
         {
             get => _disciplineId;
             set => _disciplineId = value;
         }
         [ForeignKey("DisciplineId")]
-        public Discipline Discipline
+        public Discipline? Discipline
         {
             get => _discipline;
             set => _discipline = value;
+        }
+        public string? StudentId
+        {
+            get => _studentId;
+            set => _studentId = value;
+        }
+        [ForeignKey("StudentId")]
+        public Student? Student
+        {
+            get => _student;
         }
         #endregion
         #endregion
