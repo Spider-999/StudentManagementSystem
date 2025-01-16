@@ -1,0 +1,47 @@
+﻿@model StudentManagementSystem.ViewModels.CreateStudentUserViewModel
+
+@{
+    ViewData["Title"] = "Creeaza Student";
+}
+
+<h2>Creeaza Student</h2>
+
+<form asp-action="CreateStudent" method="post">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="control-label"></label>
+        <input asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ConfirmPassword" class="control-label"></label>
+        <input asp-for="ConfirmPassword" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-4" id="studentFields">
+        <label asp-for="YearOfStudy"></label>
+        <select asp-for="YearOfStudy" class="form-control">
+            <option value=1>Anul 1</option>
+            <option value=2>Anul 2</option>
+            <option value=3>Anul 3</option>
+            <option value=4>Anul 4</option>
+        </select>
+        <span asp-validation-for="YearOfStudy" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Creeaza</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<StudentManagementSystem.ViewModels.UserAndRolesViewModel>
+
+@{
+    ViewData["Title"] = "Vezi utilizatorii";
+}
+
+<h2>Toti utilizatorii</h2>
+
+<a asp-action="CreateProfessor" 
+    asp-controller="Admin" 
+    class="btn btn-primary">
+    Creeaza profesor
+</a>
+
+<a asp-action="CreateStudent"
+   asp-controller="Admin"
+   class="btn btn-primary">
+    Creeaza student
+</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nume</th>
+            <th>Email</th>
+            <th>Roluri</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.User.Name</td>
+                <td>@user.User.Name</td>
+                <td>
+                    @foreach (var role in user.Roles)
+                    {
+                        <span>@role</span>
+                    }
+                </td>
+                <td>
+                    <form asp-controller="Admin" asp-action="DeleteUser" method="post" onsubmit="return confirm('Esti sigur ca vrei sa stergi acest utilizator?');">
+                        <input type="hidden" name="userId" value="@user.User.Id" />
+                        <button type="submit" class="btn btn-danger">Sterge Utilizator</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

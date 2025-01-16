@@ -9,7 +9,7 @@ namespace StudentManagementSystem.ViewModels
         private string _title;
         private string _description;
         private DateTime _creationDate;
-        private DateTime _endDate = DateTime.Now;
+        private DateTime? _endDate;
         private double _grade;
         private bool _status;
         private bool _mandatory;
@@ -58,7 +58,7 @@ namespace StudentManagementSystem.ViewModels
         [Required(ErrorMessage = "Termenul limita este necesar")]
         [Display(Name = "Termenul limita")]
         [DataType(DataType.DateTime)]
-        public DateTime EndDate
+        public DateTime? EndDate
         {
             get => _endDate;
             set => _endDate = value;

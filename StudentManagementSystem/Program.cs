@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
@@ -70,6 +71,8 @@ using (var scope = app.Services.CreateScope())
 {
     // Create user roles
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     string[] roles = { "Admin", "Student", "Professor" };
 
     // Add user roles to the database
@@ -79,6 +82,28 @@ using (var scope = app.Services.CreateScope())
         {
             // Add role if it doesnt exist yet
             await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    // Create the admin user
+    var adminEmail = "admin@mail.com";
+    var admin = await userManager.FindByEmailAsync(adminEmail);
+    if(admin == null)
+    {
+        var newAdmin = new Admin
+        {
+            Name = "admin",
+            UserName = adminEmail,
+            Email = adminEmail,
+        };
+        var adminCreate = await userManager.CreateAsync(newAdmin, "admin");
+        if(adminCreate.Succeeded)
+        {
+            // Assign the admin user every role
+            foreach(var role in roles)
+            {
+                var roleAssignResult = await userManager.AddToRoleAsync(newAdmin, role);
+            }
         }
     }
 }

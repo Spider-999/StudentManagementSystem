@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    [Migration("20250115163646_GradeAverageColumnSD")]
-    partial class GradeAverageColumnSD
+    [Migration("20250116154025_AdminUser")]
+    partial class AdminUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -228,6 +228,9 @@ namespace StudentManagementSystem.Migrations
                     b.Property<double?>("Grade")
                         .HasColumnType("float");
 
+                    b.Property<bool?>("HasGrade")
+                        .HasColumnType("bit");
+
                     b.Property<string>("HomeworkType")
                         .IsRequired()
                         .HasMaxLength(8)
@@ -418,7 +421,17 @@ namespace StudentManagementSystem.Migrations
                 {
                     b.HasBaseType("StudentManagementSystem.Models.Homework");
 
+                    b.Property<int>("TimeLimit")
+                        .HasColumnType("int");
+
                     b.HasDiscriminator().HasValue("Quiz");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Admin", b =>
+                {
+                    b.HasBaseType("StudentManagementSystem.Models.User");
+
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>
@@ -556,6 +569,15 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Discipline");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.Admin", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.User", null)
+                        .WithOne()
+                        .HasForeignKey("StudentManagementSystem.Models.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Professor", b =>

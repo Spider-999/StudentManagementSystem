@@ -17,6 +17,7 @@ namespace StudentManagementSystem.Controllers
             _userManager = userManager;
         }
 
+
         public async Task<IActionResult> Index()
         {
             // This logic is for when the user closes the site
@@ -24,21 +25,22 @@ namespace StudentManagementSystem.Controllers
             // instead of seeing the Home controllers basic index page.
             if(User.Identity.IsAuthenticated)
             {
+
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                     return View();
 
-                if (await _userManager.IsInRoleAsync(user, "Student"))
+                if (await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                else if (await _userManager.IsInRoleAsync(user, "Student"))
                 {
                     return RedirectToAction("Index", "Student");
                 }
                 else if (await _userManager.IsInRoleAsync(user, "Professor"))
                 {
                     return RedirectToAction("Index", "Professor");
-                }
-                else if (await _userManager.IsInRoleAsync(user, "Admin"))
-                {
-                    return RedirectToAction("Index", "Admin");
                 }
             }
             return View();

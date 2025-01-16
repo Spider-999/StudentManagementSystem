@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Models;
 
@@ -9,6 +10,7 @@ namespace StudentManagementSystem.Data
         #region Private properties
         private DbSet<Student> _students;
         private DbSet<Professor> _professors;
+        private DbSet<Admin> _admins;
         private DbSet<Discipline> _disciplines;
         private DbSet<Homework> _homeworks;
         private DbSet<Project> _projects;
@@ -29,6 +31,13 @@ namespace StudentManagementSystem.Data
             get => _professors;
             set => _professors = value;
         }
+
+        public DbSet<Admin> Admins
+        {
+            get =>_admins;
+            set => _admins = value;
+        }
+
         public DbSet<Discipline> Disciplines
         {
             get => _disciplines;
@@ -78,7 +87,7 @@ namespace StudentManagementSystem.Data
         #endregion
 
         #region Methods
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override async void OnModelCreating(ModelBuilder builder)
         {
            
             base.OnModelCreating(builder);
@@ -88,6 +97,7 @@ namespace StudentManagementSystem.Data
             // the students and professors have different properties.
             builder.Entity<Student>().ToTable("Students");
             builder.Entity<Professor>().ToTable("Professors");
+            builder.Entity<Admin>().ToTable("Admins");
 
             // Configure the discriminator for the Homework hierarchy.
             // Dont remove these, otherwise the application wont work.
@@ -96,6 +106,13 @@ namespace StudentManagementSystem.Data
                 .HasValue<Homework>("Homework")
                 .HasValue<Project>("Project")
                 .HasValue<Quiz>("Quiz");
+
+            // Configure cascade delete for related entities
+            builder.Entity<Homework>()
+                .HasOne(h => h.Student)
+                .WithMany(s => s.Homeworks)
+                .HasForeignKey(h => h.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             //The necessary methods for creating the many to many relationship between Student and Discipline and specifying the foreign keys
             builder.Entity<StudentDiscipline>().HasKey(sd => new { sd.StudentId, sd.DisciplineId });

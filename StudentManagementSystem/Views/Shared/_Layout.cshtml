@@ -11,7 +11,11 @@
 </head>
 <body>
     <header>
-        @if (User.IsInRole("Student"))
+        @if(User.IsInRole("Admin"))
+        {
+            <partial name="_AdminPartial" />
+        }
+        else if (User.IsInRole("Student"))
         {
             <partial name="_StudentPartial" />
         }
