@@ -154,41 +154,45 @@ namespace StudentManagementSystem.Controllers
             if (model.Files == null || model.Files.Count <= 0)
                 return View(model);
 
-            // TODO: Add try-catch statements
-            if(ModelState.IsValid)
-            {
-                var project = await _context.Projects.FindAsync(model.ProjectID);
-                if(project == null)
-                    return NotFound();
-
-                // Iterate through all of the models files sent by the user
-                foreach(var file in model.Files)
+            try {
+                if (ModelState.IsValid)
                 {
-                    // To read and write the byte array data of the file content
-                    using(var memoryStream = new MemoryStream())
+                    var project = await _context.Projects.FindAsync(model.ProjectID);
+                    if (project == null)
+                        throw new StudentControllerException("Project not found", 404);
+
+                    // Iterate through all of the models files sent by the user
+                    foreach (var file in model.Files)
                     {
-                        // Copy file contents to the memory stream
-                        await file.CopyToAsync(memoryStream);
-                        // Create a project file for each file sent by the user
-                        var projectFile = new ProjectFile
+                        // To read and write the byte array data of the file content
+                        using (var memoryStream = new MemoryStream())
                         {
-                            ProjectID = project.Id,
-                            FileName = file.FileName,
-                            FileContent = memoryStream.ToArray()
-                        };
-                        // Save that file in the database
-                        _context.ProjectFiles.Add(projectFile);
+                            // Copy file contents to the memory stream
+                            await file.CopyToAsync(memoryStream);
+                            // Create a project file for each file sent by the user
+                            var projectFile = new ProjectFile
+                            {
+                                ProjectID = project.Id,
+                                FileName = file.FileName,
+                                FileContent = memoryStream.ToArray()
+                            };
+                            // Save that file in the database
+                            _context.ProjectFiles.Add(projectFile);
+                        }
                     }
+
+                    // Set the status to true because the project files have been uploaded
+                    // and the project is now completed
+                    project.Status = true;
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Homework));
                 }
-
-                // Set the status to true because the project files have been uploaded
-                // and the project is now completed
-                project.Status = true;
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Homework));
+                return View(model);
             }
-
-            return View(model);
+            catch(StudentControllerException ex)
+            {
+                return StatusCode(ex.ErrorCode, ex.Message);
+            }
         }
 
         [HttpGet]
