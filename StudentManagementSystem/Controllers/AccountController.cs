@@ -191,7 +191,7 @@ namespace StudentManagementSystem.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
-                _logger.LogInformation($"\n\n\n\n\n\n\nUser Role: {role}\n\n\n\n\n\n");
+                _logger.LogInformation($"User Role: {role}");
             }
 
             // Find which role the user belongs to and redirect them

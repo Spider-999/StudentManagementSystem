@@ -90,6 +90,58 @@ namespace StudentManagementSystem.Controllers
 
             return RedirectToAction(nameof(ViewAllUsers));
         }
+
+        [HttpGet]
+        public IActionResult CreateProfessor()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProfessor(CreateProfessorUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get the discipline with the name the professor selected
+                // This is need for the discipline Id to be assigned when creating
+                // the professor.
+                var discipline = await _context.Disciplines.FirstOrDefaultAsync(d => d.Name == model.Department);
+                if (discipline == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Disciplina nu a fost gasita pentru profesor!");
+                    return RedirectToAction(nameof(ViewAllUsers));
+                }
+
+                var user = new Professor
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Name = model.Name,
+                    Department = model.Department,
+                    DisciplineId = discipline.Id
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, "Professor");
+                    if (roleResult.Succeeded)
+                    {
+                        return RedirectToAction(nameof(ViewAllUsers));
+                    }
+
+                    foreach (var error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return View(model);
+        }
         #endregion
 
 
