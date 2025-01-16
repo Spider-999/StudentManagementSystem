@@ -1,0 +1,72 @@
+﻿@model List<StudentManagementSystem.Models.Homework>
+
+@{
+    ViewData["Title"] = $"Tema Studentului {@ViewBag.StudentName}";
+}
+
+<h2>Temele pentru @ViewBag.StudentName</h2>
+
+@if (!Model.Any())
+{
+    <p>Nu au fost gasite teme pentru acest student.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titlu</th>
+                <th>Descriere</th>
+                <th>Data crearii</th>
+                <th>Termen limita</th>
+                <th>Nota</th>
+                <th>Stare</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var homework in Model)
+            {
+                <tr>
+                    <td>@homework.Title</td>
+                    <td>@homework.Description</td>
+                    <td>@homework.CreationDate</td>
+                    <td>@homework.EndDate</td>
+
+                    @if (homework.Grade == 0.00)
+                    {
+                        <td>Fara nota</td>
+                    }
+                    else
+                    {
+                        <td>@homework.Grade</td>
+                    }
+
+                    @if (homework.Status == false)
+                    {
+                        <td>Neevaluata</td>
+                    }
+                    else
+                    {
+                        <td>Evaluata</td>
+                    }
+
+                    @if (homework is StudentManagementSystem.Models.Project)
+                    {
+                        <td>
+                            <a asp-controller="Professor" asp-action="DownloadProjectFiles" asp-route-projectId="@homework.Id" class="btn btn-primary btn-sm">Descarca fisierele</a>
+                        </td>
+                    }
+                    @if (homework is not StudentManagementSystem.Models.Quiz)
+                    {
+                        <td>
+                            <a asp-controller="Professor" asp-action="GradeHomework" asp-route-homeworkId="@homework.Id" class="btn btn-primary btn-sm">
+                        Adauga o nota
+                    </a>
+                    </td>
+                    }
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
