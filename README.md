@@ -17,6 +17,9 @@ Students can solve homeworks, quizzes and project(with file uploads).
 Professors can create different types of homeworks(basic homework assignments, quizzes and projects),
 they can grade homeworks, change the formula for calculating the grade for the discipline they're teaching.
 
+### Admins
+Admins can create students or professors and delete existing users too.
+
 ### Quiz
 Time based quiz with questions and the student gets the grade after submitting the questions.
 
