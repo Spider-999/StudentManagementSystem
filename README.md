@@ -1,3 +1,10 @@
+# How to run
+1.Create empty asp.net core project
+2.Install dependencies from the nuget package manager
+3.Install ssms and create a sql database
+4.Change the database connection string name to your database name
+5. Run
+
 # StudentManagementSystem
 # Used technologies
 C# with ASP.NET Core with EntityFramework for Database management and IdentityFramework for 
